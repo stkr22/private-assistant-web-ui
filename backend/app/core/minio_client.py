@@ -9,7 +9,7 @@ from pathlib import Path
 from minio import Minio
 from minio.error import S3Error
 
-from app.core.config import settings
+from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -34,20 +34,21 @@ class MinIOClient:
             S3Error: If bucket creation or verification fails.
         """
         if cls._instance is None:
+            settings = get_settings()
             client = Minio(
-                settings.MINIO_ENDPOINT,
-                access_key=settings.MINIO_ACCESS_KEY,
-                secret_key=settings.MINIO_SECRET_KEY,
-                secure=settings.MINIO_SECURE,
+                settings.minio.ENDPOINT,
+                access_key=settings.minio.ACCESS_KEY,
+                secret_key=settings.minio.SECRET_KEY,
+                secure=settings.minio.SECURE,
             )
 
             # Ensure bucket exists
             try:
-                if not client.bucket_exists(settings.MINIO_BUCKET_NAME):
-                    client.make_bucket(settings.MINIO_BUCKET_NAME)
-                    logger.info(f"Created MinIO bucket: {settings.MINIO_BUCKET_NAME}")
+                if not client.bucket_exists(settings.minio.BUCKET_NAME):
+                    client.make_bucket(settings.minio.BUCKET_NAME)
+                    logger.info(f"Created MinIO bucket: {settings.minio.BUCKET_NAME}")
                 else:
-                    logger.info(f"MinIO bucket already exists: {settings.MINIO_BUCKET_NAME}")
+                    logger.info(f"MinIO bucket already exists: {settings.minio.BUCKET_NAME}")
             except S3Error as e:
                 logger.error(f"Failed to initialize MinIO bucket: {e}")
                 raise
@@ -72,6 +73,7 @@ class MinIOClient:
             S3Error: If upload fails.
         """
         client = cls.get_client()
+        settings = get_settings()
 
         # Generate unique storage path
         file_ext = Path(file_name).suffix or ".jpg"
@@ -79,7 +81,7 @@ class MinIOClient:
 
         try:
             client.put_object(
-                settings.MINIO_BUCKET_NAME,
+                settings.minio.BUCKET_NAME,
                 storage_path,
                 BytesIO(file_data),
                 length=len(file_data),
@@ -104,9 +106,10 @@ class MinIOClient:
             S3Error: If deletion fails.
         """
         client = cls.get_client()
+        settings = get_settings()
 
         try:
-            client.remove_object(settings.MINIO_BUCKET_NAME, storage_path)
+            client.remove_object(settings.minio.BUCKET_NAME, storage_path)
             logger.info(f"Deleted image from MinIO: {storage_path}")
         except S3Error as e:
             logger.error(f"Failed to delete image from MinIO: {e}")
@@ -127,10 +130,11 @@ class MinIOClient:
             S3Error: If URL generation fails.
         """
         client = cls.get_client()
+        settings = get_settings()
 
         try:
             url = client.presigned_get_object(
-                settings.MINIO_BUCKET_NAME,
+                settings.minio.BUCKET_NAME,
                 storage_path,
                 expires=timedelta(hours=expires_hours),
             )

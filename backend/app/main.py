@@ -10,11 +10,11 @@ from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
-from app.core.config import settings
+from app.core.config import get_settings
 
 # Configure logging
 logging.basicConfig(
-    level=settings.LOG_LEVEL,
+    level=get_settings().LOG_LEVEL,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     stream=sys.stdout,
 )
@@ -34,6 +34,7 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Shutting down application...")
 
 
+settings = get_settings()
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",

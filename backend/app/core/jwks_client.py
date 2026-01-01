@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 import httpx
 
-from app.core.config import settings
+from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -31,10 +31,11 @@ class OAuthJWKSClient:
 
     def _get_jwks_url(self) -> str:
         """Build JWKS URL from OAuth provider issuer."""
-        if not settings.OAUTH_ISSUER:
+        settings = get_settings()
+        if not settings.oauth.ISSUER:
             raise ValueError("OAUTH_ISSUER not configured")
         # Zitadel uses /oauth/v2/keys instead of standard /.well-known/jwks.json
-        return f"{settings.OAUTH_ISSUER}/oauth/v2/keys"
+        return f"{settings.oauth.ISSUER}/oauth/v2/keys"
 
     async def fetch_jwks(self) -> dict:
         """Fetch JWKS from OAuth provider with caching."""

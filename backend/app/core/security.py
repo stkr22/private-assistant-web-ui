@@ -12,7 +12,7 @@ from joserfc.errors import JoseError
 from joserfc.jwk import KeySet, OctKey
 from passlib.context import CryptContext
 
-from app.core.config import settings
+from app.core.config import get_settings
 from app.core.jwks_client import OAuthJWKSClient
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ class TokenType:
 @lru_cache(maxsize=1)
 def _get_local_key() -> OctKey:
     """Get or create the symmetric key for local JWT operations."""
-    return OctKey.import_key(settings.SECRET_KEY)
+    return OctKey.import_key(get_settings().SECRET_KEY)
 
 
 def detect_token_type(token: str) -> TokenTypeValue:
@@ -59,7 +59,8 @@ def detect_token_type(token: str) -> TokenTypeValue:
         payload = json.loads(payload_bytes)
 
         issuer = payload.get("iss")
-        if issuer and settings.OAUTH_ISSUER and issuer.rstrip("/") == settings.OAUTH_ISSUER.rstrip("/"):
+        settings = get_settings()
+        if issuer and settings.oauth.ISSUER and issuer.rstrip("/") == settings.oauth.ISSUER.rstrip("/"):
             logger.debug(f"Detected OAuth token from issuer: {issuer}")
             return TokenType.OAUTH
 
@@ -87,7 +88,8 @@ async def validate_oauth_token(token: str) -> dict[str, Any]:
     2. Uses joserfc to decode and validate the JWT
     3. Verifies issuer, expiration, subject, and optionally audience
     """
-    if settings.DISABLE_OAUTH or not settings.OAUTH_ISSUER:
+    settings = get_settings()
+    if settings.DISABLE_OAUTH or not settings.oauth.ISSUER:
         raise ValueError("OAuth is disabled or not configured")
 
     # Fetch JWKS from provider
@@ -111,7 +113,7 @@ async def validate_oauth_token(token: str) -> dict[str, Any]:
 
         # Build claims registry for validation
         claims_registry = joserfc_jwt.JWTClaimsRegistry(
-            iss={"essential": True, "value": settings.OAUTH_ISSUER},
+            iss={"essential": True, "value": settings.oauth.ISSUER},
             sub={"essential": True},
             leeway=120,  # 2 minutes clock skew tolerance
         )
@@ -120,11 +122,11 @@ async def validate_oauth_token(token: str) -> dict[str, Any]:
         claims_registry.validate(token_obj.claims)
 
         # Check audience if configured
-        if settings.OAUTH_CLIENT_ID:
+        if settings.oauth.CLIENT_ID:
             aud = token_obj.claims.get("aud")
             if aud:
                 aud_list = aud if isinstance(aud, list) else [aud]
-                if settings.OAUTH_CLIENT_ID not in aud_list:
+                if settings.oauth.CLIENT_ID not in aud_list:
                     raise JoseError("Invalid audience")
 
         logger.info(f"OAuth token validated successfully for sub={token_obj.claims.get('sub')}")

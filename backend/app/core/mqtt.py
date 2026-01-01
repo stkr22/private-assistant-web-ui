@@ -7,7 +7,7 @@ from typing import Any
 
 import aiomqtt
 
-from app.core.config import settings
+from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -27,13 +27,14 @@ async def get_mqtt_client():
     Raises:
         Exception: If connection to MQTT broker fails.
     """
+    settings = get_settings()
     async with aiomqtt.Client(
-        hostname=settings.MQTT_BROKER_HOST,
-        port=settings.MQTT_BROKER_PORT,
-        username=settings.MQTT_USERNAME if settings.MQTT_USERNAME else None,
-        password=settings.MQTT_PASSWORD if settings.MQTT_PASSWORD else None,
+        hostname=settings.mqtt.HOST,
+        port=settings.mqtt.PORT,
+        username=settings.mqtt.USERNAME if settings.mqtt.USERNAME else None,
+        password=settings.mqtt.PASSWORD if settings.mqtt.PASSWORD else None,
     ) as client:
-        logger.info(f"MQTT client connected to {settings.MQTT_BROKER_HOST}:{settings.MQTT_BROKER_PORT}")
+        logger.info(f"MQTT client connected to {settings.mqtt.HOST}:{settings.mqtt.PORT}")
         yield client
 
 
