@@ -10,8 +10,7 @@ import { UploadImage } from "@/components/PictureDisplay/UploadImage"
 
 function getImagesQueryOptions() {
   return {
-    queryFn: () =>
-      PictureDisplayService.readImages({ skip: 0, limit: 100 }),
+    queryFn: () => PictureDisplayService.readImages({ skip: 0, limit: 100 }),
     queryKey: ["picture-display-images"],
   }
 }

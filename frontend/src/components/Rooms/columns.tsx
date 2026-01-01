@@ -43,9 +43,7 @@ export const columns: ColumnDef<RoomPublic>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    cell: ({ row }) => (
-      <span className="font-medium">{row.original.name}</span>
-    ),
+    cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
     enableColumnFilter: false,
     enableSorting: true,
   },

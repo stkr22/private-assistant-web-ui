@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_layout/monitoring")({
 
 function SkillsTableContent() {
   const { data: skills, dataUpdatedAt } = useSuspenseQuery(
-    getSkillsQueryOptions()
+    getSkillsQueryOptions(),
   )
 
   if (skills.data.length === 0) {

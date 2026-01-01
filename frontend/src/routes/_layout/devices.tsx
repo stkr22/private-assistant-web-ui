@@ -61,7 +61,7 @@ function DevicesTableContent() {
 
   const columns = useMemo(
     () => createColumns(deviceTypes.data, rooms.data, skills.data),
-    [deviceTypes.data, rooms.data, skills.data]
+    [deviceTypes.data, rooms.data, skills.data],
   )
 
   const filterOptions = useMemo(
@@ -75,7 +75,7 @@ function DevicesTableContent() {
         label: room.name,
       })),
     }),
-    [deviceTypes.data, rooms.data]
+    [deviceTypes.data, rooms.data],
   )
 
   if (devices.data.length === 0) {

@@ -1,12 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { PictureDisplayService, type PictureDisplayImagePublic } from "@/client"
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card"
+import { type PictureDisplayImagePublic, PictureDisplayService } from "@/client"
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ImageActionsMenu } from "./ImageActionsMenu"
 

@@ -28,7 +28,10 @@ export const DeviceTypeActionsMenu = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <EditDeviceType deviceType={deviceType} onSuccess={() => setOpen(false)} />
+        <EditDeviceType
+          deviceType={deviceType}
+          onSuccess={() => setOpen(false)}
+        />
         <DeleteDeviceType id={deviceType.id} onSuccess={() => setOpen(false)} />
       </DropdownMenuContent>
     </DropdownMenu>

@@ -85,9 +85,7 @@ const EditRoom = ({ room, onSuccess }: EditRoomProps) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Edit Room</DialogTitle>
-          <DialogDescription>
-            Update the room details.
-          </DialogDescription>
+          <DialogDescription>Update the room details.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>

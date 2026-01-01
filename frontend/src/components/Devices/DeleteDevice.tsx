@@ -67,7 +67,11 @@ const DeleteDevice = ({ id, onSuccess }: DeleteDeviceProps) => {
           </DialogHeader>
           <DialogFooter className="mt-4">
             <DialogClose asChild>
-              <Button type="button" variant="outline" disabled={mutation.isPending}>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={mutation.isPending}
+              >
                 Cancel
               </Button>
             </DialogClose>

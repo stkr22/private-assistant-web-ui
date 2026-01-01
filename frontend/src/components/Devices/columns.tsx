@@ -45,7 +45,7 @@ export interface DeviceTableData extends GlobalDevicePublic {
 export function createColumns(
   deviceTypes: DeviceTypePublic[],
   rooms: RoomPublic[],
-  skills: SkillPublic[]
+  skills: SkillPublic[],
 ): ColumnDef<DeviceTableData>[] {
   const deviceTypeMap = new Map(deviceTypes.map((dt) => [dt.id, dt.name]))
   const roomMap = new Map(rooms.map((r) => [r.id, r.name]))
@@ -88,8 +88,7 @@ export function createColumns(
     },
     {
       id: "room_name",
-      accessorFn: (row) =>
-        row.room_id ? roomMap.get(row.room_id) || "" : "",
+      accessorFn: (row) => (row.room_id ? roomMap.get(row.room_id) || "" : ""),
       header: "Room",
       cell: ({ row }) => {
         const roomId = row.original.room_id

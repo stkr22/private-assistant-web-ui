@@ -1,12 +1,12 @@
 import {
   type ColumnDef,
   type ColumnFiltersState,
-  type SortingState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type SortingState,
   useReactTable,
 } from "@tanstack/react-table"
 import {
@@ -92,23 +92,16 @@ export function DataTable<TData, TValue>({
                   <TableHead key={header.id} className="align-top">
                     {header.isPlaceholder ? null : (
                       <div className="flex flex-col gap-1">
-                        <div
-                          className={
-                            canSort
-                              ? "flex items-center gap-1 cursor-pointer select-none hover:text-foreground"
-                              : ""
-                          }
-                          onClick={
-                            canSort
-                              ? header.column.getToggleSortingHandler()
-                              : undefined
-                          }
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                          {canSort && (
+                        {canSort ? (
+                          <button
+                            type="button"
+                            className="flex items-center gap-1 cursor-pointer select-none hover:text-foreground"
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                             <span className="ml-1">
                               {header.column.getIsSorted() === "asc" ? (
                                 <ArrowUp className="h-3.5 w-3.5" />
@@ -118,8 +111,15 @@ export function DataTable<TData, TValue>({
                                 <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/50" />
                               )}
                             </span>
-                          )}
-                        </div>
+                          </button>
+                        ) : (
+                          <span>
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                          </span>
+                        )}
                         {canFilter &&
                           (filterVariant === "select" && columnFilterOptions ? (
                             <Select

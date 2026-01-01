@@ -39,10 +39,7 @@ const formSchema = z.object({
   file: z
     .instanceof(File, { message: "Please select an image file" })
     .refine((f) => f.size <= MAX_FILE_SIZE, "File must be less than 10MB")
-    .refine(
-      (f) => f.type.startsWith("image/"),
-      "File must be an image"
-    ),
+    .refine((f) => f.type.startsWith("image/"), "File must be an image"),
   title: z.string().max(255).optional(),
   description: z.string().max(1000).optional(),
   tags: z.string().max(500).optional(),
@@ -143,8 +140,9 @@ export function UploadImage() {
                       Image <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <div
-                        className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-primary transition-colors"
+                      <button
+                        type="button"
+                        className="w-full border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-primary transition-colors"
                         onClick={() => fileInputRef.current?.click()}
                       >
                         <input
@@ -167,7 +165,7 @@ export function UploadImage() {
                             <p className="text-xs mt-1">Max 10MB</p>
                           </div>
                         )}
-                      </div>
+                      </button>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -181,10 +179,7 @@ export function UploadImage() {
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Image title (optional)"
-                        {...field}
-                      />
+                      <Input placeholder="Image title (optional)" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

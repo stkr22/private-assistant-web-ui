@@ -45,6 +45,7 @@ function OAuthCallback() {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -55,12 +56,16 @@ function OAuthCallback() {
               </svg>
             </div>
             <p className="text-destructive">Authentication failed</p>
-            <p className="text-sm text-muted-foreground">Redirecting to login...</p>
+            <p className="text-sm text-muted-foreground">
+              Redirecting to login...
+            </p>
           </>
         ) : (
           <>
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-            <p className="text-muted-foreground">Completing authentication...</p>
+            <p className="text-muted-foreground">
+              Completing authentication...
+            </p>
           </>
         )}
       </div>

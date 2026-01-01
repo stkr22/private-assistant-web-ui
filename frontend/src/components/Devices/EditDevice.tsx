@@ -86,7 +86,8 @@ const EditDevice = ({
       skill_id: device.skill_id,
       room_id: device.room_id ?? "",
       pattern: device.pattern ?? [],
-      device_attributes: (device.device_attributes as Record<string, unknown>) ?? {},
+      device_attributes:
+        (device.device_attributes as Record<string, unknown>) ?? {},
     },
   })
 
