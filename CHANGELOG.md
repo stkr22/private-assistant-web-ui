@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.1.0...v0.2.0) (2026-01-01)
+
+
+### Features
+
+* :recycle: refactor config to nested settings with factory function [AI] ([47199d4](https://github.com/stkr22/private-assistant-web-ui/commit/47199d4bda5f46f289c3a62a7a5566dd05d45a0a))
+* :recycle: refactor config to nested settings with factory function [AI] ([e4ddc95](https://github.com/stkr22/private-assistant-web-ui/commit/e4ddc95274bb733ec38a0c56b54c8ad9412f7e0f))
+
 ## 0.1.0 (2026-01-01)
 
 
