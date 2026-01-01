@@ -26,7 +26,7 @@ from private_assistant_picture_display_skill.models.image import Image  # noqa: 
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel import SQLModel
 
-from app.core.config import settings
+from app.core.config import get_settings
 
 # Import all models to register them with SQLModel metadata
 from app.models import User  # noqa: F401
@@ -34,7 +34,7 @@ from app.models import User  # noqa: F401
 
 async def create_tables():
     """Create all database tables."""
-    engine = create_async_engine(str(settings.SQLALCHEMY_DATABASE_URI), echo=True)
+    engine = create_async_engine(str(get_settings().SQLALCHEMY_DATABASE_URI), echo=True)
 
     async with engine.begin() as conn:
         # Create all tables defined in SQLModel metadata

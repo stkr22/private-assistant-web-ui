@@ -1,5 +1,4 @@
 import asyncio
-import os
 from logging.config import fileConfig
 
 from alembic import context
@@ -21,7 +20,7 @@ fileConfig(config.config_file_name)
 # target_metadata = None
 
 from app.models import SQLModel  # noqa
-from app.core.config import settings # noqa
+from app.core.config import get_settings  # noqa
 
 # AIDEV-NOTE: Import commons models for foreign key resolution during autogenerate.
 # These tables are managed by private-assistant-commons package and won't be migrated,
@@ -42,7 +41,7 @@ target_metadata = SQLModel.metadata
 
 
 def get_url():
-    return str(settings.SQLALCHEMY_DATABASE_URI)
+    return str(get_settings().SQLALCHEMY_DATABASE_URI)
 
 
 def include_object(object, name, type_, reflected, compare_to):

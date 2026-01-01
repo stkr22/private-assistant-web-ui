@@ -5,14 +5,14 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app import crud
-from app.core.config import settings
+from app.core.config import get_settings
 from app.models import User, UserCreate
 
 
 @lru_cache(maxsize=1)
 def get_engine() -> AsyncEngine:
     """Get or create the database engine (lazy singleton)."""
-    return create_async_engine(str(settings.SQLALCHEMY_DATABASE_URI), echo=False)
+    return create_async_engine(str(get_settings().SQLALCHEMY_DATABASE_URI), echo=False)
 
 
 # make sure all SQLModel models are imported (app.models) before initializing DB
@@ -23,6 +23,7 @@ def get_engine() -> AsyncEngine:
 async def init_db(session: AsyncSession) -> None:
     # Tables should be created with Alembic migrations
     # Models are already imported and registered from app.models
+    settings = get_settings()
     result = await session.exec(select(User).where(User.email == settings.FIRST_SUPERUSER))
     user = result.first()
     if not user:

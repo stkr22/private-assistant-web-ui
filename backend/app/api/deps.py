@@ -12,13 +12,13 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core import security
-from app.core.config import settings
+from app.core.config import get_settings
 from app.core.db import get_engine
 from app.models import TokenPayload, User
 
 logger = logging.getLogger(__name__)
 
-reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/login/access-token")
+reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{get_settings().API_V1_STR}/login/access-token")
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
@@ -64,6 +64,7 @@ async def _get_or_create_oauth_user(session: AsyncSession, oauth_payload: dict[s
 
     If email is not in the token, fetches it from the userinfo endpoint.
     """
+    settings = get_settings()
     if settings.DISABLE_OAUTH:
         raise HTTPException(status_code=400, detail="OAuth authentication is disabled")
 
@@ -84,8 +85,8 @@ async def _get_or_create_oauth_user(session: AsyncSession, oauth_payload: dict[s
     full_name = oauth_payload.get("name")
 
     # If email not in token, fetch from userinfo endpoint
-    if not email and settings.OAUTH_ISSUER:
-        userinfo_url = f"{settings.OAUTH_ISSUER}/oidc/v1/userinfo"
+    if not email and settings.oauth.ISSUER:
+        userinfo_url = f"{settings.oauth.ISSUER}/oidc/v1/userinfo"
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(
@@ -112,8 +113,8 @@ async def _get_or_create_oauth_user(session: AsyncSession, oauth_payload: dict[s
 
     # Extract provider name from issuer
     provider = "oauth"
-    if settings.OAUTH_ISSUER:
-        issuer_parts = settings.OAUTH_ISSUER.rstrip("/").split("//")[-1].split("/")[0]
+    if settings.oauth.ISSUER:
+        issuer_parts = settings.oauth.ISSUER.rstrip("/").split("//")[-1].split("/")[0]
         provider = issuer_parts.replace("www.", "")
 
     new_user = User(
