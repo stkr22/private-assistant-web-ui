@@ -1,0 +1,120 @@
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+[project]
+name = "app"
+version = "0.1.0"
+description = "Web UI for Private Assistant ecosystem with device management and picture display"
+authors = [
+    { name = "stkr22", email = "stkr22@github.com" }
+]
+readme = "README.md"
+license = "GPL-3.0-only"
+
+keywords = ["home-automation", "private-assistant", "web-ui", "fastapi"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Programming Language :: Python",
+    "Framework :: FastAPI",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Topic :: Home Automation",
+]
+
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "fastapi[standard]~=0.119.1",
+    "passlib[bcrypt]~=1.7.4",
+    "tenacity~=9.1.2",
+    "alembic~=1.17.2",
+    "pydantic-settings~=2.12.0",
+    "private-assistant-commons~=5.3.0",
+    "minio~=7.2.20",
+    "greenlet~=3.3.0",
+    "httpx",
+    "private-assistant-picture-display-skill~=0.2.0",
+    "joserfc~=1.6.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/stkr22/private-assistant-web-ui"
+Repository = "https://github.com/stkr22/private-assistant-web-ui"
+
+[dependency-groups]
+dev = [
+    "ruff~=0.14.1",
+    "mypy~=1.19.1",
+    "pytest~=9.0.2",
+    "pytest-cov~=7.0.0",
+    "types-passlib~=1.7.7",
+    "coverage[toml]~=7.13.1",
+    "factory-boy~=3.3.0",
+]
+
+[tool.mypy]
+exclude = ["venv", ".venv", "alembic"]
+warn_return_any = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+[tool.ruff]
+exclude = ["alembic"]
+line-length = 120
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "UP",   # pyupgrade
+    "N",    # pep8-naming
+    "RET",  # flake8-return
+    "SIM",  # flake8-simplify
+    "ARG",  # flake8-unused-arguments
+    "PTH",  # flake8-use-pathlib
+    "ERA",  # eradicate
+    "PL",   # pylint
+    "RUF",  # ruff-specific rules
+    "TCH",  # flake8-type-checking
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.coverage.run]
+source = ["app"]
+dynamic_context = "test_function"
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+sort = "-Cover"
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+]
+
+[tool.coverage.html]
+show_contexts = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra -q"
+asyncio_mode = "auto"
