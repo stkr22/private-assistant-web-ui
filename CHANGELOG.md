@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.3.0...v0.4.0) (2026-01-03)
+
+
+### Features
+
+* add health check endpoint and response schema ([172bd39](https://github.com/stkr22/private-assistant-web-ui/commit/172bd39ba1d74af7e9ad255e4d88ba7f8c8041b1))
+
 ## [0.3.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.2.0...v0.3.0) (2026-01-03)
 
 
