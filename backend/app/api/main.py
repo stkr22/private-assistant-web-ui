@@ -9,14 +9,12 @@ from app.api.routes import (
     private,
     rooms,
     users,
-    utils,
 )
 from app.core.config import get_settings
 
 api_router = APIRouter()
 api_router.include_router(login.router)
 api_router.include_router(users.router)
-api_router.include_router(utils.router)
 api_router.include_router(devices.router)
 api_router.include_router(rooms.router)
 api_router.include_router(device_types.router)

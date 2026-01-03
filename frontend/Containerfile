@@ -27,6 +27,11 @@ COPY ./nginx-backend-not-found.conf /etc/nginx/extra-conf.d/backend-not-found.co
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+# Create writable directory for runtime configuration
+# /var/cache/nginx is already owned by nginx user in the base image
+RUN mkdir -p /var/cache/nginx/config && \
+    chown -R nginx:nginx /var/cache/nginx/config
+
 # Runtime environment variables (set via Helm/K8s)
 ENV VITE_API_URL=""
 ENV VITE_OAUTH_AUTHORITY=""

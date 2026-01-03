@@ -10,6 +10,7 @@ from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
+from app.api.schemas.health import HealthResponse
 from app.core.config import get_settings
 
 # Configure logging
@@ -51,5 +52,19 @@ if settings.all_cors_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+
+# Health check endpoint at root level
+@app.get("/health", response_model=HealthResponse, tags=["infrastructure"])
+async def health() -> HealthResponse:
+    """Health check endpoint.
+
+    Returns a simple status response to indicate the service is running.
+
+    Returns:
+        HealthResponse: Current health status.
+    """
+    return HealthResponse()
+
 
 app.include_router(api_router, prefix=settings.API_V1_STR)

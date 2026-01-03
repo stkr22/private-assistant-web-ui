@@ -23,7 +23,7 @@ def test_app_api_package_exists() -> None:
 def test_health_check_endpoint() -> None:
     """Verify health check endpoint returns correct response."""
     client = TestClient(app)
-    response = client.get("/api/v1/utils/health")
+    response = client.get("/health")
 
     assert response.status_code == HTTPStatus.OK
     data = response.json()
