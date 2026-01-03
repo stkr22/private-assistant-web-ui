@@ -18,6 +18,9 @@ if [ -z "$VITE_OAUTH_AUTHORITY" ] && [ -n "$VITE_OAUTH_CLIENT_ID" ]; then
   exit 1
 fi
 
+# Ensure config directory exists (might be lost if /var/cache/nginx is a volume mount)
+mkdir -p /var/cache/nginx/config
+
 # Generate config.js
 cat > /var/cache/nginx/config/config.js << 'EOF'
 // Runtime configuration (auto-generated at container startup)
