@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.2.0...v0.3.0) (2026-01-03)
+
+
+### Features
+
+* :recycle: add runtime config injection for frontend [AI] ([85163d4](https://github.com/stkr22/private-assistant-web-ui/commit/85163d42d9db5d5f03a326e89dbfb4809989527e))
+* :recycle: add runtime config injection for frontend [AI] ([391f3a4](https://github.com/stkr22/private-assistant-web-ui/commit/391f3a476063ac1211a66efa71654ae32219a55d))
+
+
+### Bug Fixes
+
+* :recycle: update Node.js base image in Containerfile for consistency ([74a7a4e](https://github.com/stkr22/private-assistant-web-ui/commit/74a7a4e29ea73851b35c54cd4cc342c737b21f27))
+* :recycle: update workflow file names and Dockerfile references for consistency ([8b94c80](https://github.com/stkr22/private-assistant-web-ui/commit/8b94c80b9dd4b711abe0fcb44efddff4b2a3f0b7))
+
 ## [0.2.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.1.0...v0.2.0) (2026-01-01)
 
 
