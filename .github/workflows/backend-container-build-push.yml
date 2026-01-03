@@ -1,4 +1,4 @@
-name: Container Push
+name: Backend Container Push
 
 on:
   release:

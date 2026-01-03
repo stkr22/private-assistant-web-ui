@@ -13,6 +13,9 @@ dist-ssr
 *.local
 openapi.json
 
+# Generated runtime configuration
+/public/config.js
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

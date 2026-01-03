@@ -1,4 +1,4 @@
-name: Python Code Quality
+name: Backend Python Code Quality
 
 on:
   pull_request:
