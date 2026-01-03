@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1](https://github.com/stkr22/private-assistant-web-ui/compare/v0.4.0...v0.4.1) (2026-01-03)
+
+
+### Bug Fixes
+
+* moving health endpoint to root level ([a95e7e9](https://github.com/stkr22/private-assistant-web-ui/commit/a95e7e9e8f5572e870d4d7d93a8477e86aa805fe))
+* permission issue with nginx config.js ([86d6846](https://github.com/stkr22/private-assistant-web-ui/commit/86d68466c79205bf0cad250ea75547ab6b00f874))
+
 ## [0.4.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.3.0...v0.4.0) (2026-01-03)
 
 
