@@ -112,7 +112,11 @@ cd frontend
 # Install dependencies
 npm install
 
-# Start dev server
+# Create .env file from template (first time only)
+cp .env.example .env
+# Edit .env and set VITE_API_URL (required) and optional OAuth settings
+
+# Start dev server (automatically generates runtime config from .env)
 npm run dev
 
 # Generate API client (after backend changes)
@@ -121,6 +125,20 @@ npm run generate-client
 # Run E2E tests
 npm run test:e2e
 ```
+
+**Runtime Configuration:**
+- The frontend uses a runtime configuration system (not build-time)
+- In development: `npm run dev` generates `public/config.js` from your `.env` file
+- In production: The container generates `/config.js` from environment variables at startup
+- This allows the same Docker image to be deployed to different environments
+
+**Required Configuration:**
+- `VITE_API_URL` - Backend API endpoint (e.g., `http://localhost:8000`)
+
+**Optional OAuth Configuration:**
+- `VITE_OAUTH_AUTHORITY` - OAuth/OIDC provider authority URL
+- `VITE_OAUTH_CLIENT_ID` - OAuth client ID
+- Both must be set together or OAuth will be disabled
 
 ### Database Management
 
@@ -169,7 +187,9 @@ All seeded data uses fictional values (e.g., `fictional2mqtt/...` topics) to avo
 
 ## Environment Variables
 
-Key environment variables (see `.env` for full list):
+### Backend Environment Variables
+
+Key environment variables (see `backend/.env` for full list):
 
 ```bash
 # Database
@@ -191,6 +211,23 @@ MINIO_BUCKET_NAME=assistant-images
 # OAuth (optional)
 DISABLE_OAUTH=true  # Set to false in production
 ```
+
+### Frontend Environment Variables
+
+Configuration variables (see `frontend/.env.example` for template):
+
+```bash
+# Backend API URL (REQUIRED)
+VITE_API_URL=http://localhost:8000
+
+# OAuth Configuration (OPTIONAL - both must be set together)
+VITE_OAUTH_AUTHORITY=https://your-oauth-provider.com
+VITE_OAUTH_CLIENT_ID=your-client-id
+VITE_OAUTH_REDIRECT_URI=http://localhost:5173/oauth-callback
+VITE_OAUTH_SCOPE=openid email profile
+```
+
+**Note:** In production (Docker/Kubernetes), frontend configuration is injected at runtime via environment variables, not baked into the image. See `frontend/Containerfile` for details.
 
 ## Architecture
 

@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "generate-config": "node scripts/generate-config.js",
+    "dev": "node scripts/generate-config.js && vite",
     "build": "tsc -p tsconfig.build.json && vite build",
     "lint": "biome check --write --unsafe --no-errors-on-unmatched --files-ignore-unknown=true ./",
-    "preview": "vite preview",
+    "preview": "node scripts/generate-config.js && vite preview",
     "generate-client": "openapi-ts"
   },
   "dependencies": {

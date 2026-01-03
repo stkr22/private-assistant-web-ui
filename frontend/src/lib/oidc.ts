@@ -1,13 +1,17 @@
 import { UserManager, WebStorageStateStore } from "oidc-client-ts"
+import { config } from "@/config/runtime-config"
 
-const authority = import.meta.env.VITE_OAUTH_AUTHORITY
-const clientId = import.meta.env.VITE_OAUTH_CLIENT_ID
+const oauthConfig = config.oauth
+
+const authority = oauthConfig?.authority || ""
+const clientId = oauthConfig?.clientId || ""
 const redirectUri =
-  import.meta.env.VITE_OAUTH_REDIRECT_URI ||
-  `${window.location.origin}/oauth-callback`
-const scope = import.meta.env.VITE_OAUTH_SCOPE || "openid email profile"
+  oauthConfig?.redirectUri || `${window.location.origin}/oauth-callback`
+const scope = oauthConfig?.scope || "openid email profile"
 
-export const isOAuthEnabled = Boolean(authority && clientId)
+export const isOAuthEnabled = Boolean(
+  oauthConfig?.authority && oauthConfig?.clientId,
+)
 
 const settings = {
   authority,
