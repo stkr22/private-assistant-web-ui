@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/stkr22/private-assistant-web-ui/compare/v0.4.2...v0.4.3) (2026-01-04)
+
+
+### Bug Fixes
+
+* update MQTT publish topic to use skill_config ([0c6dd81](https://github.com/stkr22/private-assistant-web-ui/commit/0c6dd8198807ea10a71ae0fa879362bb7583ce26))
+
 ## [0.4.2](https://github.com/stkr22/private-assistant-web-ui/compare/v0.4.1...v0.4.2) (2026-01-03)
 
 
