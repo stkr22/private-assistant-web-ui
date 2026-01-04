@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 import aiomqtt
+from private_assistant_commons import skill_config
 
 from app.core.config import get_settings
 
@@ -48,7 +49,7 @@ async def publish_device_update(device_id: str, action: str) -> None:
     Raises:
         Exception: If MQTT publish fails.
     """
-    topic = "assistant/device_registry/update"
+    topic = skill_config.SkillConfig().device_update_topic
     payload: dict[str, Any] = {
         "device_id": device_id,
         "action": action,
