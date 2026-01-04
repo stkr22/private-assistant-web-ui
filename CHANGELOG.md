@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/stkr22/private-assistant-web-ui/compare/v0.4.1...v0.4.2) (2026-01-03)
+
+
+### Bug Fixes
+
+* ensure config directory exists in entrypoint script ([b436b28](https://github.com/stkr22/private-assistant-web-ui/commit/b436b28e1b3a4c8d930ca5aa5415660a3fa42dd8))
+
 ## [0.4.1](https://github.com/stkr22/private-assistant-web-ui/compare/v0.4.0...v0.4.1) (2026-01-03)
 
 
