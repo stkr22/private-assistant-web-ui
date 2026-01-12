@@ -34,7 +34,9 @@ async def create():
     await engine.dispose()
 asyncio.run(create())
 "
+
 uv run python -m scripts.seed.seed_database
+uv run python -m app.prestart
 
 # 3. Start backend (in one terminal)
 uv run fastapi dev app/main.py

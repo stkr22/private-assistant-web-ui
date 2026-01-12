@@ -111,7 +111,7 @@ class ImageFactory(factory.Factory):
 
     id = factory.LazyFunction(uuid.uuid4)
     source_name = factory.Faker("word")
-    storage_path = factory.LazyAttribute(lambda obj: f"manual/{obj.source_name}_{uuid.uuid4().hex[:8]}.jpg")
+    storage_path = "manual upload"
     title = factory.Faker("sentence", nb_words=3)
     description = factory.Faker("paragraph", nb_sentences=2)
     tags = factory.LazyFunction(lambda: "nature,landscape,scenic")
