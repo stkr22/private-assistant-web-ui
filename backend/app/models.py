@@ -1,5 +1,9 @@
 import uuid
 
+# Import picture display models from skill package to register with SQLModel
+from private_assistant_picture_display_skill.models.device import DeviceDisplayState  # noqa: F401
+from private_assistant_picture_display_skill.models.image import Image  # noqa: F401
+from private_assistant_picture_display_skill.models.immich_sync_job import ImmichSyncJob  # noqa: F401
 from sqlmodel import Field, SQLModel
 
 
@@ -48,12 +52,3 @@ class Token(SQLModel):
 # Contents of JWT token
 class TokenPayload(SQLModel):
     sub: str | None = None
-
-
-# Import picture display models from skill package to register with SQLModel
-# AIDEV-NOTE: These imports ensure that the table models are registered
-# with SQLModel's metadata for Alembic migrations
-from private_assistant_picture_display_skill.models.device import (  # noqa: F401, E402
-    DeviceDisplayState,
-)
-from private_assistant_picture_display_skill.models.image import Image  # noqa: F401, E402

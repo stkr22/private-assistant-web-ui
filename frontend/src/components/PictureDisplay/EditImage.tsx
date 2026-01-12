@@ -5,7 +5,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { type PictureDisplayImagePublic, PictureDisplayService } from "@/client"
+import { type ImagePublic, PictureDisplayService } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -37,14 +37,14 @@ const formSchema = z.object({
   title: z.string().max(255).optional(),
   description: z.string().max(1000).optional(),
   tags: z.string().max(500).optional(),
-  display_duration_seconds: z.number().min(5).max(300),
+  display_duration_minutes: z.number().min(5).max(30),
   priority: z.number().min(1).max(10),
 })
 
 type FormData = z.infer<typeof formSchema>
 
 interface EditImageProps {
-  image: PictureDisplayImagePublic
+  image: ImagePublic
   onSuccess: () => void
 }
 
@@ -60,7 +60,7 @@ export function EditImage({ image, onSuccess }: EditImageProps) {
       title: image.title ?? "",
       description: image.description ?? "",
       tags: image.tags ?? "",
-      display_duration_seconds: image.display_duration_seconds,
+      display_duration_minutes: Math.round(image.display_duration_seconds / 60),
       priority: image.priority,
     },
   })
@@ -73,7 +73,7 @@ export function EditImage({ image, onSuccess }: EditImageProps) {
           title: data.title || null,
           description: data.description || null,
           tags: data.tags || null,
-          display_duration_seconds: data.display_duration_seconds,
+          display_duration_seconds: data.display_duration_minutes * 60,
           priority: data.priority,
         },
       }),
@@ -164,21 +164,21 @@ export function EditImage({ image, onSuccess }: EditImageProps) {
 
               <FormField
                 control={form.control}
-                name="display_duration_seconds"
+                name="display_duration_minutes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Display Duration: {field.value}s</FormLabel>
+                    <FormLabel>Display Duration: {field.value} min</FormLabel>
                     <FormControl>
                       <Slider
                         value={[field.value]}
                         onValueChange={(v: number[]) => field.onChange(v[0])}
                         min={5}
-                        max={300}
+                        max={30}
                         step={5}
                       />
                     </FormControl>
                     <FormDescription>
-                      How long to display (5-300 seconds)
+                      How long to display (5-30 minutes)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

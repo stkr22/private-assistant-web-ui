@@ -76,7 +76,7 @@ async def upload_image(  # noqa: PLR0913 - form fields require separate paramete
 
     # Create DB record using skill's Image model
     image = Image(
-        source_name=file.filename or "uploaded",
+        source_name="manual upload",
         storage_path=storage_path,
         title=title,
         description=description,

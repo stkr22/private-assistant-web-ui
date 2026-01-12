@@ -103,27 +103,41 @@ export type GlobalDeviceUpdate = {
 } | null);
 };
 
+/**
+ * Health check response model.
+ *
+ * Attributes:
+ * status: Current health status of the application.
+ */
+export type HealthResponse = {
+    /**
+     * Health status of the application
+     */
+    status?: string;
+};
+
 export type HTTPValidationError = {
     detail?: Array<ValidationError>;
 };
 
-export type Message = {
-    message: string;
-};
-
 /**
- * Public API model for images.
+ * API response model for Image.
  */
-export type PictureDisplayImagePublic = {
+export type ImagePublic = {
     id: string;
     source_name: string;
     storage_path: string;
     title: (string | null);
     description: (string | null);
+    author: (string | null);
+    source_url: (string | null);
     tags: (string | null);
     display_duration_seconds: number;
     priority: number;
+    original_width: (number | null);
+    original_height: (number | null);
     last_displayed_at: (string | null);
+    expires_at: (string | null);
     created_at: string;
     updated_at: string;
 };
@@ -131,20 +145,226 @@ export type PictureDisplayImagePublic = {
 /**
  * Paginated response for images.
  */
-export type PictureDisplayImagesPublic = {
-    data: Array<PictureDisplayImagePublic>;
+export type ImagesPublic = {
+    data: Array<ImagePublic>;
     count: number;
 };
 
 /**
- * Model for updating images.
+ * API request model for updating images.
  */
-export type PictureDisplayImageUpdate = {
+export type ImageUpdate = {
     title?: (string | null);
     description?: (string | null);
     tags?: (string | null);
     display_duration_seconds?: (number | null);
     priority?: (number | null);
+};
+
+/**
+ * API request model for creating sync jobs.
+ */
+export type ImmichSyncJobCreate = {
+    /**
+     * Unique job name
+     */
+    name: string;
+    /**
+     * Device this job syncs for
+     */
+    target_device_id: string;
+    /**
+     * Selection strategy: RANDOM or SMART
+     */
+    strategy?: SyncStrategy;
+    /**
+     * Semantic search query for SMART strategy
+     */
+    query?: (string | null);
+    /**
+     * Images to sync per run
+     */
+    count?: number;
+    /**
+     * Randomly sample from smart search results
+     */
+    random_pick?: boolean;
+    /**
+     * Multiplier for overfetching when client-side filters active
+     */
+    overfetch_multiplier?: number;
+    /**
+     * Minimum color compatibility score (0 to disable)
+     */
+    min_color_score?: number;
+    /**
+     * Whether job is active
+     */
+    is_active?: boolean;
+    /**
+     * Filter by album UUIDs
+     */
+    album_ids?: (Array<(string)> | null);
+    /**
+     * Filter by person UUIDs
+     */
+    person_ids?: (Array<(string)> | null);
+    /**
+     * Filter by tag UUIDs
+     */
+    tag_ids?: (Array<(string)> | null);
+    /**
+     * Filter favorites only
+     */
+    is_favorite?: (boolean | null);
+    /**
+     * Filter by city
+     */
+    city?: (string | null);
+    /**
+     * Filter by state/region
+     */
+    state?: (string | null);
+    /**
+     * Filter by country
+     */
+    country?: (string | null);
+    /**
+     * Photos taken after this date
+     */
+    taken_after?: (string | null);
+    /**
+     * Photos taken before this date
+     */
+    taken_before?: (string | null);
+    /**
+     * Minimum rating (0-5)
+     */
+    rating?: (number | null);
+};
+
+/**
+ * API response model for sync jobs.
+ */
+export type ImmichSyncJobPublic = {
+    /**
+     * Unique job name
+     */
+    name: string;
+    /**
+     * Device this job syncs for
+     */
+    target_device_id: string;
+    /**
+     * Selection strategy: RANDOM or SMART
+     */
+    strategy?: SyncStrategy;
+    /**
+     * Semantic search query for SMART strategy
+     */
+    query?: (string | null);
+    /**
+     * Images to sync per run
+     */
+    count?: number;
+    /**
+     * Randomly sample from smart search results
+     */
+    random_pick?: boolean;
+    /**
+     * Multiplier for overfetching when client-side filters active
+     */
+    overfetch_multiplier?: number;
+    /**
+     * Minimum color compatibility score (0 to disable)
+     */
+    min_color_score?: number;
+    /**
+     * Whether job is active
+     */
+    is_active?: boolean;
+    /**
+     * Filter by album UUIDs
+     */
+    album_ids?: (Array<(string)> | null);
+    /**
+     * Filter by person UUIDs
+     */
+    person_ids?: (Array<(string)> | null);
+    /**
+     * Filter by tag UUIDs
+     */
+    tag_ids?: (Array<(string)> | null);
+    /**
+     * Filter favorites only
+     */
+    is_favorite?: (boolean | null);
+    /**
+     * Filter by city
+     */
+    city?: (string | null);
+    /**
+     * Filter by state/region
+     */
+    state?: (string | null);
+    /**
+     * Filter by country
+     */
+    country?: (string | null);
+    /**
+     * Photos taken after this date
+     */
+    taken_after?: (string | null);
+    /**
+     * Photos taken before this date
+     */
+    taken_before?: (string | null);
+    /**
+     * Minimum rating (0-5)
+     */
+    rating?: (number | null);
+    id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * Paginated response for sync jobs.
+ */
+export type ImmichSyncJobsPublic = {
+    data: Array<ImmichSyncJobPublic>;
+    count: number;
+};
+
+/**
+ * API request model for updating sync jobs.
+ *
+ * All fields are optional to allow partial updates.
+ */
+export type ImmichSyncJobUpdate = {
+    name?: (string | null);
+    target_device_id?: (string | null);
+    strategy?: (SyncStrategy | null);
+    query?: (string | null);
+    count?: (number | null);
+    random_pick?: (boolean | null);
+    overfetch_multiplier?: (number | null);
+    min_color_score?: (number | null);
+    is_active?: (boolean | null);
+    album_ids?: (Array<(string)> | null);
+    person_ids?: (Array<(string)> | null);
+    tag_ids?: (Array<(string)> | null);
+    is_favorite?: (boolean | null);
+    city?: (string | null);
+    state?: (string | null);
+    country?: (string | null);
+    taken_after?: (string | null);
+    taken_before?: (string | null);
+    rating?: (number | null);
+};
+
+export type Message = {
+    message: string;
 };
 
 /**
@@ -211,6 +431,13 @@ export type SkillsPublic = {
     data: Array<SkillPublic>;
     count: number;
 };
+
+/**
+ * Strategy for selecting images from Immich.
+ *
+ * Values are uppercase to match PostgreSQL enum labels created by SQLAlchemy.
+ */
+export type SyncStrategy = 'RANDOM' | 'SMART';
 
 export type Token = {
     access_token: string;
@@ -300,6 +527,40 @@ export type DeviceTypesDeleteDeviceTypeData = {
 
 export type DeviceTypesDeleteDeviceTypeResponse = (Message);
 
+export type ImmichSyncJobsReadSyncJobsData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type ImmichSyncJobsReadSyncJobsResponse = (ImmichSyncJobsPublic);
+
+export type ImmichSyncJobsCreateSyncJobData = {
+    requestBody: ImmichSyncJobCreate;
+};
+
+export type ImmichSyncJobsCreateSyncJobResponse = (ImmichSyncJobPublic);
+
+export type ImmichSyncJobsReadSyncJobData = {
+    jobId: string;
+};
+
+export type ImmichSyncJobsReadSyncJobResponse = (ImmichSyncJobPublic);
+
+export type ImmichSyncJobsUpdateSyncJobData = {
+    jobId: string;
+    requestBody: ImmichSyncJobUpdate;
+};
+
+export type ImmichSyncJobsUpdateSyncJobResponse = (ImmichSyncJobPublic);
+
+export type ImmichSyncJobsDeleteSyncJobData = {
+    jobId: string;
+};
+
+export type ImmichSyncJobsDeleteSyncJobResponse = (Message);
+
+export type InfrastructureHealthResponse = (HealthResponse);
+
 export type LoginLoginAccessTokenData = {
     formData: Body_login_login_access_token;
 };
@@ -314,27 +575,27 @@ export type PictureDisplayUploadImageData = {
     formData: Body_picture_display_upload_image;
 };
 
-export type PictureDisplayUploadImageResponse = (PictureDisplayImagePublic);
+export type PictureDisplayUploadImageResponse = (ImagePublic);
 
 export type PictureDisplayReadImagesData = {
     limit?: number;
     skip?: number;
 };
 
-export type PictureDisplayReadImagesResponse = (PictureDisplayImagesPublic);
+export type PictureDisplayReadImagesResponse = (ImagesPublic);
 
 export type PictureDisplayReadImageData = {
     imageId: string;
 };
 
-export type PictureDisplayReadImageResponse = (PictureDisplayImagePublic);
+export type PictureDisplayReadImageResponse = (ImagePublic);
 
 export type PictureDisplayUpdateImageData = {
     imageId: string;
-    requestBody: PictureDisplayImageUpdate;
+    requestBody: ImageUpdate;
 };
 
-export type PictureDisplayUpdateImageResponse = (PictureDisplayImagePublic);
+export type PictureDisplayUpdateImageResponse = (ImagePublic);
 
 export type PictureDisplayDeleteImageData = {
     imageId: string;
@@ -407,5 +668,3 @@ export type UsersDeleteUserData = {
 };
 
 export type UsersDeleteUserResponse = (Message);
-
-export type UtilsHealthCheckResponse = (boolean);

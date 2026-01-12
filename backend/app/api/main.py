@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.api.routes import (
     device_types,
     devices,
+    immich_sync_job,
     login,
     monitoring,
     picture_display,
@@ -19,6 +20,7 @@ api_router.include_router(devices.router)
 api_router.include_router(rooms.router)
 api_router.include_router(device_types.router)
 api_router.include_router(picture_display.router)
+api_router.include_router(immich_sync_job.router)
 api_router.include_router(monitoring.router)
 
 

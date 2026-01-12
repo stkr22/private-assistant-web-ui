@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { type PictureDisplayImagePublic, PictureDisplayService } from "@/client"
+import { type ImagePublic, PictureDisplayService } from "@/client"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ImageActionsMenu } from "./ImageActionsMenu"
 
 interface ImageCardProps {
-  image: PictureDisplayImagePublic
+  image: ImagePublic
 }
 
 export function ImageCard({ image }: ImageCardProps) {
@@ -47,11 +47,11 @@ export function ImageCard({ image }: ImageCardProps) {
         <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
           <span>Priority: {image.priority}</span>
           <span>|</span>
-          <span>{image.display_duration_seconds}s</span>
+          <span>{Math.round(image.display_duration_seconds / 60)} min</span>
         </div>
         {image.tags && (
           <div className="flex flex-wrap gap-1 mt-2">
-            {image.tags.split(",").map((tag, idx) => (
+            {image.tags.split(",").map((tag: string, idx: number) => (
               <span
                 key={idx}
                 className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-xs"

@@ -1,7 +1,7 @@
 import { EllipsisVertical } from "lucide-react"
 import { useState } from "react"
 
-import type { PictureDisplayImagePublic } from "@/client"
+import type { ImagePublic } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -12,7 +12,7 @@ import { DeleteImage } from "./DeleteImage"
 import { EditImage } from "./EditImage"
 
 interface ImageActionsMenuProps {
-  image: PictureDisplayImagePublic
+  image: ImagePublic
 }
 
 export function ImageActionsMenu({ image }: ImageActionsMenuProps) {
