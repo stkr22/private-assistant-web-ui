@@ -33,11 +33,11 @@ dependencies = [
     "tenacity~=9.1.2",
     "alembic~=1.17.2",
     "pydantic-settings",
-    "private-assistant-commons~=5.3.0",
+    "private-assistant-commons~=5.4.0",
     "minio~=7.2.20",
     "greenlet~=3.3.0",
     "httpx",
-    "private-assistant-picture-display-skill~=0.2.0",
+    "private-assistant-picture-display-skill~=0.4.0",
     "joserfc~=1.6.1",
 ]
 
@@ -62,10 +62,6 @@ warn_return_any = true
 warn_unused_configs = true
 plugins = ["pydantic.mypy"]
 
-[tool.pydantic-mypy]
-init_forbid_extra = true
-init_typed = true
-warn_required_dynamic_aliases = true
 
 [tool.ruff]
 exclude = ["alembic"]
