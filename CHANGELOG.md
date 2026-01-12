@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.5.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.4.3...v0.5.0) (2026-01-12)
+
+
+### Features
+
+* :lipstick: change display duration UI from seconds to minutes ([ff05a91](https://github.com/stkr22/private-assistant-web-ui/commit/ff05a91a1739b5b311b15c1e0f1ceba14d6a8c79))
+* :sparkles: add Immich sync job backend API with CRUD endpoints ([5878da8](https://github.com/stkr22/private-assistant-web-ui/commit/5878da87b9062f61971f7b89fd7edcfada1532d5))
+* :sparkles: add Immich sync job management UI with tabs interface ([a7d839a](https://github.com/stkr22/private-assistant-web-ui/commit/a7d839ab0c258e8d0debcc85ac083dd864e56099))
+* :sparkles: update database seeding and image upload logic for clarity ([eb7615e](https://github.com/stkr22/private-assistant-web-ui/commit/eb7615ea8b19b575acdad11a08a7b9de466b46f0))
+
+
+### Bug Fixes
+
+* :wrench: rename env vars to match config expectations ([c7bfff0](https://github.com/stkr22/private-assistant-web-ui/commit/c7bfff019a946c5d553dbc63dbe5a8d5c7d2f546))
+
+
+### Documentation
+
+* :memo: simplify README with essential setup instructions ([e1fc5aa](https://github.com/stkr22/private-assistant-web-ui/commit/e1fc5aabe63afcc44a196a0bc35d4987e6156911))
+
 ## [0.4.3](https://github.com/stkr22/private-assistant-web-ui/compare/v0.4.2...v0.4.3) (2026-01-04)
 
 
