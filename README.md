@@ -4,40 +4,55 @@ A comprehensive web interface for managing the Private Assistant ecosystem, buil
 
 ## Quick Start
 
-### Launch Development Environment
+### Prerequisites
 
-**The devcontainer includes:**
+Open this project in a devcontainer (VS Code or GitHub Codespaces). The devcontainer provides:
 - PostgreSQL (port 5432)
-- Mosquitto MQTT Broker (ports 1883, 9001)
+- Mosquitto MQTT Broker (port 1883)
 - MinIO Object Storage (ports 9000, 9001)
 
 ### Initial Setup
 
 ```bash
-# Install backend dependencies
+# 1. Backend setup
 cd backend
 uv sync
 
-# Create database migrations
-uv run alembic revision --autogenerate -m "Add picture display tables"
-
-# Apply migrations
+# 2. Create database tables and seed with test data
 uv run alembic upgrade head
+uv run python -c "
+import asyncio
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlmodel import SQLModel
+from private_assistant_commons.database.models import GlobalDevice, Room, DeviceType, Skill
+from app.models import User
+from app.core.config import get_settings
+async def create():
+    engine = create_async_engine(str(get_settings().SQLALCHEMY_DATABASE_URI))
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
+    await engine.dispose()
+asyncio.run(create())
+"
+uv run python -m scripts.seed.seed_database
 
-# Verify setup
-uv run pytest
-
-# Start backend server
+# 3. Start backend (in one terminal)
 uv run fastapi dev app/main.py
+
+# 4. Frontend setup (in another terminal)
+cd frontend
+npm install
+cp .env.example .env
+npm run dev
 ```
 
-### Access Services
+### Default Credentials
 
-- **Backend API**: http://localhost:8000
+- **Web UI**: http://localhost:5173
+  - Email: `admin@example.com`
+  - Password: `changethis`
 - **API Docs**: http://localhost:8000/docs
 - **MinIO Console**: http://localhost:9001 (minioadmin/minioadmin)
-- **PostgreSQL**: localhost:5432 (postgres/changethis)
-- **MQTT Broker**: localhost:1883
 
 ## Project Structure
 
@@ -47,9 +62,7 @@ uv run fastapi dev app/main.py
 │   ├── app/
 │   │   ├── api/            # API routes
 │   │   ├── core/           # Configuration, MQTT, MinIO clients
-│   │   ├── models.py       # User/Item models
-│   │   ├── models_commons.py   # Commons re-exports
-│   │   ├── models_picture.py   # Picture display models
+│   │   ├── models.py       # SQLModel definitions
 │   │   └── alembic/        # Database migrations
 │   └── pyproject.toml
 ├── frontend/               # React frontend
@@ -61,40 +74,18 @@ uv run fastapi dev app/main.py
 ├── .devcontainer/         # Dev environment configuration
 ```
 
-## Features
-
-### Implemented ✅
-- Backend foundation with SQLModel and FastAPI
-- MQTT client for device registry updates
-- MinIO client for image storage
-- Commons model integration
-- Devcontainer with PostgreSQL, MQTT, MinIO
-
-### In Progress ⏳
-- Device management API (CRUD with MQTT notifications)
-- Picture display API (upload, manage, schedule)
-- Monitoring API (skills and commands)
-- React frontend pages
-
-### Planned 📋
-- OAuth integration (generic OIDC)
-- Advanced scheduling system
-- Bulk operations
-- Kubernetes deployment manifests
-
 ## Development
 
-### Backend Development
+### Backend
 
 ```bash
 cd backend
 
+# Start server
+uv run fastapi dev app/main.py
+
 # Run tests
 uv run pytest
-
-# Run tests with coverage
-uv run coverage run -m pytest
-uv run coverage report
 
 # Type checking
 uv run mypy app/
@@ -104,144 +95,76 @@ uv run ruff check --fix .
 uv run ruff format .
 ```
 
-### Frontend Development
+### Frontend
 
 ```bash
 cd frontend
 
-# Install dependencies
-npm install
-
-# Create .env file from template (first time only)
-cp .env.example .env
-# Edit .env and set VITE_API_URL (required) and optional OAuth settings
-
-# Start dev server (automatically generates runtime config from .env)
+# Start dev server
 npm run dev
 
-# Generate API client (after backend changes)
+# Generate API client (after backend OpenAPI changes)
 npm run generate-client
 
 # Run E2E tests
 npm run test:e2e
 ```
 
-**Runtime Configuration:**
-- The frontend uses a runtime configuration system (not build-time)
-- In development: `npm run dev` generates `public/config.js` from your `.env` file
-- In production: The container generates `/config.js` from environment variables at startup
-- This allows the same Docker image to be deployed to different environments
-
-**Required Configuration:**
-- `VITE_API_URL` - Backend API endpoint (e.g., `http://localhost:8000`)
-
-**Optional OAuth Configuration:**
-- `VITE_OAUTH_AUTHORITY` - OAuth/OIDC provider authority URL
-- `VITE_OAUTH_CLIENT_ID` - OAuth client ID
-- Both must be set together or OAuth will be disabled
-
-### Database Management
+### Database
 
 ```bash
 cd backend
-
-# Create new migration
-uv run alembic revision --autogenerate -m "Description"
 
 # Apply migrations
 uv run alembic upgrade head
 
+# Create new migration (after model changes)
+uv run alembic revision --autogenerate -m "Description"
+
 # Rollback one migration
 uv run alembic downgrade -1
 
-# View migration history
-uv run alembic history
-```
-
-### Database Seeding
-
-Populate the database with test data using the seed script:
-
-```bash
-cd backend
-
-# Seed the database (idempotent - safe to run multiple times)
-uv run python -m scripts.seed.seed_database
-
-# Clear existing data and reseed
+# Reseed database
 uv run python -m scripts.seed.seed_database --clean
-
-# Preview what would be seeded without making changes
-uv run python -m scripts.seed.seed_database --dry-run
 ```
 
-The seed script creates:
-- 8 rooms (bedroom, living room, kitchen, etc.)
-- 10 device types (light, switch, thermostat, etc.)
-- 7 skills (climate, switch, scene, etc.)
-- ~120 devices with fictional MQTT configurations
-- 3 sample images for picture displays
-- Picture display client device mappings
-
-All seeded data uses fictional values (e.g., `fictional2mqtt/...` topics) to avoid exposing real device information.
+The seed script creates test data: 8 rooms, 10 device types, 7 skills, ~120 devices, 3 images, and device display states. All data uses fictional values (e.g., `fictional2mqtt/...` topics).
 
 ## Environment Variables
 
-### Backend Environment Variables
+Environment variables are pre-configured in the devcontainer. For reference:
 
-Key environment variables (see `backend/.env` for full list):
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `POSTGRES_HOST` | postgres | Database host |
+| `POSTGRES_PORT` | 5432 | Database port |
+| `POSTGRES_DB` | app | Database name |
+| `POSTGRES_USER` | postgres | Database user |
+| `POSTGRES_PASSWORD` | changethis | Database password |
+| `MQTT_HOST` | mosquitto | MQTT broker host |
+| `MQTT_PORT` | 1883 | MQTT broker port |
+| `MINIO_ENDPOINT` | minio:9000 | MinIO endpoint |
+| `MINIO_ACCESS_KEY` | minioadmin | MinIO access key |
+| `MINIO_SECRET_KEY` | minioadmin | MinIO secret key |
+| `FIRST_SUPERUSER` | admin@example.com | Initial admin email |
+| `FIRST_SUPERUSER_PASSWORD` | changethis | Initial admin password |
 
-```bash
-# Database
-POSTGRES_SERVER=postgres  # or localhost
-POSTGRES_DB=app
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=changethis
-
-# MQTT
-MQTT_BROKER_HOST=mosquitto  # or localhost
-MQTT_BROKER_PORT=1883
-
-# MinIO
-MINIO_ENDPOINT=minio:9000  # or localhost:9000
-MINIO_ACCESS_KEY=minioadmin
-MINIO_SECRET_KEY=minioadmin
-MINIO_BUCKET_NAME=assistant-images
-
-# OAuth (optional)
-DISABLE_OAUTH=true  # Set to false in production
-```
-
-### Frontend Environment Variables
-
-Configuration variables (see `frontend/.env.example` for template):
-
-```bash
-# Backend API URL (REQUIRED)
-VITE_API_URL=http://localhost:8000
-
-# OAuth Configuration (OPTIONAL - both must be set together)
-VITE_OAUTH_AUTHORITY=https://your-oauth-provider.com
-VITE_OAUTH_CLIENT_ID=your-client-id
-VITE_OAUTH_REDIRECT_URI=http://localhost:5173/oauth-callback
-VITE_OAUTH_SCOPE=openid email profile
-```
-
-**Note:** In production (Docker/Kubernetes), frontend configuration is injected at runtime via environment variables, not baked into the image. See `frontend/Containerfile` for details.
+Frontend configuration (`frontend/.env`):
+- `VITE_API_URL` - Backend API endpoint (required, e.g., `http://localhost:8000`)
+- `VITE_OAUTH_AUTHORITY` - OAuth provider URL (optional)
+- `VITE_OAUTH_CLIENT_ID` - OAuth client ID (optional)
 
 ## Architecture
 
-### Database Integration
-- Uses **private-assistant-commons-py** for shared models (Device, Room, DeviceType, Skill)
-- Commons tables are external - managed by commons package migrations
-- Web-UI owns: picture_display_image, picture_display_client_device tables
+### Database
 
-### MQTT Integration
-- **Publish-only** client (no subscriptions)
-- Publishes device updates to `assistant/device_registry/update`
-- Skills listen for updates and reload configuration
+- **Commons tables** (`rooms`, `device_types`, `skills`, `global_devices`) - Shared models from `private-assistant-commons-py`. In development, created via `SQLModel.metadata.create_all()`.
+- **App tables** (`user`, `images`, `device_display_states`, `immich_sync_jobs`) - Managed by Alembic migrations.
+
+### MQTT
+
+Publish-only client that sends device updates to `assistant/device_registry/update`. Skills subscribe to this topic to reload configuration.
 
 ### Storage
-- **MinIO** for image storage (S3-compatible)
-- Generates presigned URLs for frontend access
-- Automatic bucket creation on startup
+
+MinIO (S3-compatible) for image storage with presigned URLs for frontend access.
