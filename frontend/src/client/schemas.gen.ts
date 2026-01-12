@@ -100,12 +100,12 @@ export const Body_picture_display_upload_imageSchema = {
         display_duration_seconds: {
             type: 'integer',
             title: 'Display Duration Seconds',
-            default: 30
+            default: 3600
         },
         priority: {
             type: 'integer',
             title: 'Priority',
-            default: 5
+            default: 0
         }
     },
     type: 'object',
@@ -442,19 +442,24 @@ export const HTTPValidationErrorSchema = {
     title: 'HTTPValidationError'
 } as const;
 
-export const MessageSchema = {
+export const HealthResponseSchema = {
     properties: {
-        message: {
+        status: {
             type: 'string',
-            title: 'Message'
+            title: 'Status',
+            description: 'Health status of the application',
+            default: 'ok'
         }
     },
     type: 'object',
-    required: ['message'],
-    title: 'Message'
+    title: 'HealthResponse',
+    description: `Health check response model.
+
+Attributes:
+    status: Current health status of the application.`
 } as const;
 
-export const PictureDisplayImagePublicSchema = {
+export const ImagePublicSchema = {
     properties: {
         id: {
             type: 'string',
@@ -491,6 +496,28 @@ export const PictureDisplayImagePublicSchema = {
             ],
             title: 'Description'
         },
+        author: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Author'
+        },
+        source_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Source Url'
+        },
         tags: {
             anyOf: [
                 {
@@ -510,6 +537,28 @@ export const PictureDisplayImagePublicSchema = {
             type: 'integer',
             title: 'Priority'
         },
+        original_width: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Original Width'
+        },
+        original_height: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Original Height'
+        },
         last_displayed_at: {
             anyOf: [
                 {
@@ -521,6 +570,18 @@ export const PictureDisplayImagePublicSchema = {
                 }
             ],
             title: 'Last Displayed At'
+        },
+        expires_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Expires At'
         },
         created_at: {
             type: 'string',
@@ -534,12 +595,12 @@ export const PictureDisplayImagePublicSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'source_name', 'storage_path', 'title', 'description', 'tags', 'display_duration_seconds', 'priority', 'last_displayed_at', 'created_at', 'updated_at'],
-    title: 'PictureDisplayImagePublic',
-    description: 'Public API model for images.'
+    required: ['id', 'source_name', 'storage_path', 'title', 'description', 'author', 'source_url', 'tags', 'display_duration_seconds', 'priority', 'original_width', 'original_height', 'last_displayed_at', 'expires_at', 'created_at', 'updated_at'],
+    title: 'ImagePublic',
+    description: 'API response model for Image.'
 } as const;
 
-export const PictureDisplayImageUpdateSchema = {
+export const ImageUpdateSchema = {
     properties: {
         title: {
             anyOf: [
@@ -578,7 +639,7 @@ export const PictureDisplayImageUpdateSchema = {
             anyOf: [
                 {
                     type: 'integer',
-                    maximum: 300,
+                    maximum: 86400,
                     minimum: 5
                 },
                 {
@@ -591,8 +652,8 @@ export const PictureDisplayImageUpdateSchema = {
             anyOf: [
                 {
                     type: 'integer',
-                    maximum: 10,
-                    minimum: 1
+                    maximum: 100,
+                    minimum: 0
                 },
                 {
                     type: 'null'
@@ -602,15 +663,15 @@ export const PictureDisplayImageUpdateSchema = {
         }
     },
     type: 'object',
-    title: 'PictureDisplayImageUpdate',
-    description: 'Model for updating images.'
+    title: 'ImageUpdate',
+    description: 'API request model for updating images.'
 } as const;
 
-export const PictureDisplayImagesPublicSchema = {
+export const ImagesPublicSchema = {
     properties: {
         data: {
             items: {
-                '$ref': '#/components/schemas/PictureDisplayImagePublic'
+                '$ref': '#/components/schemas/ImagePublic'
             },
             type: 'array',
             title: 'Data'
@@ -622,8 +683,723 @@ export const PictureDisplayImagesPublicSchema = {
     },
     type: 'object',
     required: ['data', 'count'],
-    title: 'PictureDisplayImagesPublic',
+    title: 'ImagesPublic',
     description: 'Paginated response for images.'
+} as const;
+
+export const ImmichSyncJobCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            minLength: 1,
+            title: 'Name',
+            description: 'Unique job name'
+        },
+        target_device_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Target Device Id',
+            description: 'Device this job syncs for'
+        },
+        strategy: {
+            '$ref': '#/components/schemas/SyncStrategy',
+            description: 'Selection strategy: RANDOM or SMART',
+            default: 'RANDOM'
+        },
+        query: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Query',
+            description: 'Semantic search query for SMART strategy'
+        },
+        count: {
+            type: 'integer',
+            maximum: 1000,
+            minimum: 1,
+            title: 'Count',
+            description: 'Images to sync per run',
+            default: 10
+        },
+        random_pick: {
+            type: 'boolean',
+            title: 'Random Pick',
+            description: 'Randomly sample from smart search results',
+            default: false
+        },
+        overfetch_multiplier: {
+            type: 'integer',
+            maximum: 10,
+            minimum: 1,
+            title: 'Overfetch Multiplier',
+            description: 'Multiplier for overfetching when client-side filters active',
+            default: 3
+        },
+        min_color_score: {
+            type: 'number',
+            maximum: 1,
+            minimum: 0,
+            title: 'Min Color Score',
+            description: 'Minimum color compatibility score (0 to disable)',
+            default: 0.5
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether job is active',
+            default: true
+        },
+        album_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Album Ids',
+            description: 'Filter by album UUIDs'
+        },
+        person_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Person Ids',
+            description: 'Filter by person UUIDs'
+        },
+        tag_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Tag Ids',
+            description: 'Filter by tag UUIDs'
+        },
+        is_favorite: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Favorite',
+            description: 'Filter favorites only'
+        },
+        city: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'City',
+            description: 'Filter by city'
+        },
+        state: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State',
+            description: 'Filter by state/region'
+        },
+        country: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Country',
+            description: 'Filter by country'
+        },
+        taken_after: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Taken After',
+            description: 'Photos taken after this date'
+        },
+        taken_before: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Taken Before',
+            description: 'Photos taken before this date'
+        },
+        rating: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 5,
+                    minimum: 0
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Rating',
+            description: 'Minimum rating (0-5)'
+        }
+    },
+    type: 'object',
+    required: ['name', 'target_device_id'],
+    title: 'ImmichSyncJobCreate',
+    description: 'API request model for creating sync jobs.'
+} as const;
+
+export const ImmichSyncJobPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 255,
+            minLength: 1,
+            title: 'Name',
+            description: 'Unique job name'
+        },
+        target_device_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Target Device Id',
+            description: 'Device this job syncs for'
+        },
+        strategy: {
+            '$ref': '#/components/schemas/SyncStrategy',
+            description: 'Selection strategy: RANDOM or SMART',
+            default: 'RANDOM'
+        },
+        query: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Query',
+            description: 'Semantic search query for SMART strategy'
+        },
+        count: {
+            type: 'integer',
+            maximum: 1000,
+            minimum: 1,
+            title: 'Count',
+            description: 'Images to sync per run',
+            default: 10
+        },
+        random_pick: {
+            type: 'boolean',
+            title: 'Random Pick',
+            description: 'Randomly sample from smart search results',
+            default: false
+        },
+        overfetch_multiplier: {
+            type: 'integer',
+            maximum: 10,
+            minimum: 1,
+            title: 'Overfetch Multiplier',
+            description: 'Multiplier for overfetching when client-side filters active',
+            default: 3
+        },
+        min_color_score: {
+            type: 'number',
+            maximum: 1,
+            minimum: 0,
+            title: 'Min Color Score',
+            description: 'Minimum color compatibility score (0 to disable)',
+            default: 0.5
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            description: 'Whether job is active',
+            default: true
+        },
+        album_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Album Ids',
+            description: 'Filter by album UUIDs'
+        },
+        person_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Person Ids',
+            description: 'Filter by person UUIDs'
+        },
+        tag_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Tag Ids',
+            description: 'Filter by tag UUIDs'
+        },
+        is_favorite: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Favorite',
+            description: 'Filter favorites only'
+        },
+        city: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'City',
+            description: 'Filter by city'
+        },
+        state: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State',
+            description: 'Filter by state/region'
+        },
+        country: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Country',
+            description: 'Filter by country'
+        },
+        taken_after: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Taken After',
+            description: 'Photos taken after this date'
+        },
+        taken_before: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Taken Before',
+            description: 'Photos taken before this date'
+        },
+        rating: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 5,
+                    minimum: 0
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Rating',
+            description: 'Minimum rating (0-5)'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['name', 'target_device_id', 'id', 'created_at', 'updated_at'],
+    title: 'ImmichSyncJobPublic',
+    description: 'API response model for sync jobs.'
+} as const;
+
+export const ImmichSyncJobUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255,
+                    minLength: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        target_device_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Target Device Id'
+        },
+        strategy: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/SyncStrategy'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        query: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Query'
+        },
+        count: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 1000,
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Count'
+        },
+        random_pick: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Random Pick'
+        },
+        overfetch_multiplier: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 10,
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Overfetch Multiplier'
+        },
+        min_color_score: {
+            anyOf: [
+                {
+                    type: 'number',
+                    maximum: 1,
+                    minimum: 0
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Min Color Score'
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        },
+        album_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Album Ids'
+        },
+        person_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Person Ids'
+        },
+        tag_ids: {
+            anyOf: [
+                {
+                    items: {
+                        type: 'string'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Tag Ids'
+        },
+        is_favorite: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Favorite'
+        },
+        city: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'City'
+        },
+        state: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'State'
+        },
+        country: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Country'
+        },
+        taken_after: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Taken After'
+        },
+        taken_before: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Taken Before'
+        },
+        rating: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    maximum: 5,
+                    minimum: 0
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Rating'
+        }
+    },
+    type: 'object',
+    title: 'ImmichSyncJobUpdate',
+    description: `API request model for updating sync jobs.
+
+All fields are optional to allow partial updates.`
+} as const;
+
+export const ImmichSyncJobsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/ImmichSyncJobPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'ImmichSyncJobsPublic',
+    description: 'Paginated response for sync jobs.'
+} as const;
+
+export const MessageSchema = {
+    properties: {
+        message: {
+            type: 'string',
+            title: 'Message'
+        }
+    },
+    type: 'object',
+    required: ['message'],
+    title: 'Message'
 } as const;
 
 export const PresignedUrlResponseSchema = {
@@ -794,6 +1570,15 @@ export const SkillsPublicSchema = {
     required: ['data', 'count'],
     title: 'SkillsPublic',
     description: 'Paginated response for skills.'
+} as const;
+
+export const SyncStrategySchema = {
+    type: 'string',
+    enum: ['RANDOM', 'SMART'],
+    title: 'SyncStrategy',
+    description: `Strategy for selecting images from Immich.
+
+Values are uppercase to match PostgreSQL enum labels created by SQLAlchemy.`
 } as const;
 
 export const TokenSchema = {

@@ -1,12 +1,14 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { Image } from "lucide-react"
+import { Image, Settings2 } from "lucide-react"
 import { Suspense } from "react"
 
 import { PictureDisplayService } from "@/client"
+import { SyncJobsTab } from "@/components/ImmichSyncJobs/SyncJobsTab"
 import PendingPictureDisplay from "@/components/Pending/PendingPictureDisplay"
 import { ImageCard } from "@/components/PictureDisplay/ImageCard"
 import { UploadImage } from "@/components/PictureDisplay/UploadImage"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 function getImagesQueryOptions() {
   return {
@@ -45,10 +47,15 @@ function ImageGalleryContent() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {images.data.map((image) => (
-        <ImageCard key={image.id} image={image} />
-      ))}
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-end">
+        <UploadImage />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {images.data.map((image) => (
+          <ImageCard key={image.id} image={image} />
+        ))}
+      </div>
     </div>
   )
 }
@@ -64,16 +71,30 @@ function ImageGallery() {
 function PictureDisplay() {
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Picture Display</h1>
-          <p className="text-muted-foreground">
-            Manage images for the digital picture frame
-          </p>
-        </div>
-        <UploadImage />
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Picture Display</h1>
+        <p className="text-muted-foreground">
+          Manage images and sync jobs for the digital picture frame
+        </p>
       </div>
-      <ImageGallery />
+      <Tabs defaultValue="images">
+        <TabsList>
+          <TabsTrigger value="images" className="gap-2">
+            <Image className="h-4 w-4" />
+            Images
+          </TabsTrigger>
+          <TabsTrigger value="sync-jobs" className="gap-2">
+            <Settings2 className="h-4 w-4" />
+            Sync Jobs
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="images">
+          <ImageGallery />
+        </TabsContent>
+        <TabsContent value="sync-jobs">
+          <SyncJobsTab />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { DevicesReadDevicesData, DevicesReadDevicesResponse, DevicesCreateDeviceData, DevicesCreateDeviceResponse, DevicesReadDeviceData, DevicesReadDeviceResponse, DevicesUpdateDeviceData, DevicesUpdateDeviceResponse, DevicesDeleteDeviceData, DevicesDeleteDeviceResponse, DeviceTypesReadDeviceTypesData, DeviceTypesReadDeviceTypesResponse, DeviceTypesCreateDeviceTypeData, DeviceTypesCreateDeviceTypeResponse, DeviceTypesReadDeviceTypeData, DeviceTypesReadDeviceTypeResponse, DeviceTypesUpdateDeviceTypeData, DeviceTypesUpdateDeviceTypeResponse, DeviceTypesDeleteDeviceTypeData, DeviceTypesDeleteDeviceTypeResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, MonitoringReadSkillsResponse, PictureDisplayUploadImageData, PictureDisplayUploadImageResponse, PictureDisplayReadImagesData, PictureDisplayReadImagesResponse, PictureDisplayReadImageData, PictureDisplayReadImageResponse, PictureDisplayUpdateImageData, PictureDisplayUpdateImageResponse, PictureDisplayDeleteImageData, PictureDisplayDeleteImageResponse, PictureDisplayGetImageUrlData, PictureDisplayGetImageUrlResponse, PrivateCreateUserData, PrivateCreateUserResponse, RoomsReadRoomsData, RoomsReadRoomsResponse, RoomsCreateRoomData, RoomsCreateRoomResponse, RoomsReadRoomData, RoomsReadRoomResponse, RoomsUpdateRoomData, RoomsUpdateRoomResponse, RoomsDeleteRoomData, RoomsDeleteRoomResponse, UsersReadUsersData, UsersReadUsersResponse, UsersReadUserMeResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { DevicesReadDevicesData, DevicesReadDevicesResponse, DevicesCreateDeviceData, DevicesCreateDeviceResponse, DevicesReadDeviceData, DevicesReadDeviceResponse, DevicesUpdateDeviceData, DevicesUpdateDeviceResponse, DevicesDeleteDeviceData, DevicesDeleteDeviceResponse, DeviceTypesReadDeviceTypesData, DeviceTypesReadDeviceTypesResponse, DeviceTypesCreateDeviceTypeData, DeviceTypesCreateDeviceTypeResponse, DeviceTypesReadDeviceTypeData, DeviceTypesReadDeviceTypeResponse, DeviceTypesUpdateDeviceTypeData, DeviceTypesUpdateDeviceTypeResponse, DeviceTypesDeleteDeviceTypeData, DeviceTypesDeleteDeviceTypeResponse, ImmichSyncJobsReadSyncJobsData, ImmichSyncJobsReadSyncJobsResponse, ImmichSyncJobsCreateSyncJobData, ImmichSyncJobsCreateSyncJobResponse, ImmichSyncJobsReadSyncJobData, ImmichSyncJobsReadSyncJobResponse, ImmichSyncJobsUpdateSyncJobData, ImmichSyncJobsUpdateSyncJobResponse, ImmichSyncJobsDeleteSyncJobData, ImmichSyncJobsDeleteSyncJobResponse, InfrastructureHealthResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, MonitoringReadSkillsResponse, PictureDisplayUploadImageData, PictureDisplayUploadImageResponse, PictureDisplayReadImagesData, PictureDisplayReadImagesResponse, PictureDisplayReadImageData, PictureDisplayReadImageResponse, PictureDisplayUpdateImageData, PictureDisplayUpdateImageResponse, PictureDisplayDeleteImageData, PictureDisplayDeleteImageResponse, PictureDisplayGetImageUrlData, PictureDisplayGetImageUrlResponse, PrivateCreateUserData, PrivateCreateUserResponse, RoomsReadRoomsData, RoomsReadRoomsResponse, RoomsCreateRoomData, RoomsCreateRoomResponse, RoomsReadRoomData, RoomsReadRoomResponse, RoomsUpdateRoomData, RoomsUpdateRoomResponse, RoomsDeleteRoomData, RoomsDeleteRoomResponse, UsersReadUsersData, UsersReadUsersResponse, UsersReadUserMeResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersDeleteUserData, UsersDeleteUserResponse } from './types.gen';
 
 export class DevicesService {
     /**
@@ -227,6 +227,191 @@ export class DeviceTypesService {
     }
 }
 
+export class ImmichSyncJobsService {
+    /**
+     * Read Sync Jobs
+     * Retrieve Immich sync jobs with pagination.
+     *
+     * Args:
+     * session: Database session
+     * current_user: Authenticated user
+     * skip: Number of records to skip
+     * limit: Maximum number of records to return
+     *
+     * Returns:
+     * Paginated list of sync jobs
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns ImmichSyncJobsPublic Successful Response
+     * @throws ApiError
+     */
+    public static readSyncJobs(data: ImmichSyncJobsReadSyncJobsData = {}): CancelablePromise<ImmichSyncJobsReadSyncJobsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/immich-sync-jobs/',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Sync Job
+     * Create new Immich sync job.
+     *
+     * Args:
+     * session: Database session
+     * current_user: Authenticated user
+     * job_in: Sync job creation data
+     *
+     * Returns:
+     * Created sync job record
+     *
+     * Raises:
+     * HTTPException: If validation fails (duplicate name, device not found, etc.)
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns ImmichSyncJobPublic Successful Response
+     * @throws ApiError
+     */
+    public static createSyncJob(data: ImmichSyncJobsCreateSyncJobData): CancelablePromise<ImmichSyncJobsCreateSyncJobResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/immich-sync-jobs/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Read Sync Job
+     * Get sync job by ID.
+     *
+     * Args:
+     * session: Database session
+     * current_user: Authenticated user
+     * job_id: Sync job UUID
+     *
+     * Returns:
+     * Sync job record
+     *
+     * Raises:
+     * HTTPException: If sync job not found
+     * @param data The data for the request.
+     * @param data.jobId
+     * @returns ImmichSyncJobPublic Successful Response
+     * @throws ApiError
+     */
+    public static readSyncJob(data: ImmichSyncJobsReadSyncJobData): CancelablePromise<ImmichSyncJobsReadSyncJobResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/immich-sync-jobs/{job_id}',
+            path: {
+                job_id: data.jobId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Sync Job
+     * Update an Immich sync job.
+     *
+     * Args:
+     * session: Database session
+     * current_user: Authenticated user
+     * job_id: Sync job UUID
+     * job_in: Updated sync job data
+     *
+     * Returns:
+     * Updated sync job record
+     *
+     * Raises:
+     * HTTPException: If sync job not found or validation fails
+     * @param data The data for the request.
+     * @param data.jobId
+     * @param data.requestBody
+     * @returns ImmichSyncJobPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateSyncJob(data: ImmichSyncJobsUpdateSyncJobData): CancelablePromise<ImmichSyncJobsUpdateSyncJobResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/immich-sync-jobs/{job_id}',
+            path: {
+                job_id: data.jobId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Sync Job
+     * Delete an Immich sync job.
+     *
+     * Args:
+     * session: Database session
+     * current_user: Authenticated user
+     * job_id: Sync job UUID
+     *
+     * Returns:
+     * Success message
+     *
+     * Raises:
+     * HTTPException: If sync job not found
+     * @param data The data for the request.
+     * @param data.jobId
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteSyncJob(data: ImmichSyncJobsDeleteSyncJobData): CancelablePromise<ImmichSyncJobsDeleteSyncJobResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/immich-sync-jobs/{job_id}',
+            path: {
+                job_id: data.jobId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class InfrastructureService {
+    /**
+     * Health
+     * Health check endpoint.
+     *
+     * Returns a simple status response to indicate the service is running.
+     *
+     * Returns:
+     * HealthResponse: Current health status.
+     * @returns HealthResponse Successful Response
+     * @throws ApiError
+     */
+    public static health(): CancelablePromise<InfrastructureHealthResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/health'
+        });
+    }
+}
+
 export class LoginService {
     /**
      * Login Access Token
@@ -266,13 +451,6 @@ export class MonitoringService {
     /**
      * Read Skills
      * List all registered skills.
-     *
-     * Args:
-     * session: Database session
-     * current_user: Authenticated user
-     *
-     * Returns:
-     * List of all skills
      * @returns SkillsPublic Successful Response
      * @throws ApiError
      */
@@ -296,8 +474,8 @@ export class PictureDisplayService {
      * title: Optional image title
      * description: Optional image description
      * tags: Optional comma-separated tags
-     * display_duration_seconds: Display duration (5-300 seconds)
-     * priority: Display priority (1-10)
+     * display_duration_seconds: Display duration (default 3600 seconds)
+     * priority: Display priority (default 0)
      *
      * Returns:
      * Created image record
@@ -306,7 +484,7 @@ export class PictureDisplayService {
      * HTTPException: If file validation fails or upload fails
      * @param data The data for the request.
      * @param data.formData
-     * @returns PictureDisplayImagePublic Successful Response
+     * @returns ImagePublic Successful Response
      * @throws ApiError
      */
     public static uploadImage(data: PictureDisplayUploadImageData): CancelablePromise<PictureDisplayUploadImageResponse> {
@@ -336,7 +514,7 @@ export class PictureDisplayService {
      * @param data The data for the request.
      * @param data.skip
      * @param data.limit
-     * @returns PictureDisplayImagesPublic Successful Response
+     * @returns ImagesPublic Successful Response
      * @throws ApiError
      */
     public static readImages(data: PictureDisplayReadImagesData = {}): CancelablePromise<PictureDisplayReadImagesResponse> {
@@ -369,7 +547,7 @@ export class PictureDisplayService {
      * HTTPException: If image not found
      * @param data The data for the request.
      * @param data.imageId
-     * @returns PictureDisplayImagePublic Successful Response
+     * @returns ImagePublic Successful Response
      * @throws ApiError
      */
     public static readImage(data: PictureDisplayReadImageData): CancelablePromise<PictureDisplayReadImageResponse> {
@@ -403,7 +581,7 @@ export class PictureDisplayService {
      * @param data The data for the request.
      * @param data.imageId
      * @param data.requestBody
-     * @returns PictureDisplayImagePublic Successful Response
+     * @returns ImagePublic Successful Response
      * @throws ApiError
      */
     public static updateImage(data: PictureDisplayUpdateImageData): CancelablePromise<PictureDisplayUpdateImageResponse> {
@@ -700,21 +878,6 @@ export class UsersService {
             errors: {
                 422: 'Validation Error'
             }
-        });
-    }
-}
-
-export class UtilsService {
-    /**
-     * Health Check
-     * Health check endpoint.
-     * @returns boolean Successful Response
-     * @throws ApiError
-     */
-    public static healthCheck(): CancelablePromise<UtilsHealthCheckResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/v1/utils/health-check/'
         });
     }
 }
