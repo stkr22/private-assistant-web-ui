@@ -65,3 +65,31 @@ async def publish_device_update(device_id: str, action: str) -> None:
     except Exception as e:
         logger.error(f"Error publishing to MQTT: {e}")
         raise
+
+
+async def publish_intent_pattern_update(pattern_id: str, action: str) -> None:
+    """Publish intent pattern update to MQTT.
+
+    Args:
+        pattern_id: UUID of the intent pattern.
+        action: Action type: 'created', 'updated', or 'deleted'.
+
+    Raises:
+        Exception: If MQTT publish fails.
+
+    """
+    settings = get_settings()
+    topic = settings.mqtt.INTENT_PATTERN_UPDATE_TOPIC
+    payload: dict[str, Any] = {
+        "pattern_id": pattern_id,
+        "action": action,
+        "source": "web-ui",
+    }
+
+    try:
+        async with get_mqtt_client() as client:
+            await client.publish(topic, json.dumps(payload), qos=1)
+            logger.info(f"Published intent pattern {action}: {pattern_id}")
+    except Exception as e:
+        logger.error(f"Error publishing intent pattern update to MQTT: {e}")
+        raise

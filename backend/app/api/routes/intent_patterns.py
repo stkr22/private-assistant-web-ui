@@ -8,6 +8,7 @@ from private_assistant_commons.database.intent_pattern_models import IntentPatte
 from sqlmodel import func, select
 
 from app.api.deps import CurrentUser, SessionDep
+from app.core.mqtt import publish_intent_pattern_update
 from app.models import Message
 from app.models_commons_api import (
     IntentPatternCreate,
@@ -96,6 +97,14 @@ async def create_intent_pattern(
     # Build response
     pattern_dict = pattern.model_dump()
     pattern_dict["keywords"] = [kw.model_dump() for kw in keywords]
+
+    # Publish MQTT notification
+    try:
+        await publish_intent_pattern_update(str(pattern.id), "created")
+    except Exception as e:
+        logger.error(f"Failed to publish MQTT event for pattern creation: {e}")
+        # Don't fail the request if MQTT fails
+
     return pattern_dict  # type: ignore[return-value]
 
 
@@ -145,6 +154,14 @@ async def update_intent_pattern(
     # Build response
     pattern_dict = pattern.model_dump()
     pattern_dict["keywords"] = [kw.model_dump() for kw in keywords]
+
+    # Publish MQTT notification
+    try:
+        await publish_intent_pattern_update(str(pattern_id), "updated")
+    except Exception as e:
+        logger.error(f"Failed to publish MQTT event for pattern update: {e}")
+        # Don't fail the request if MQTT fails
+
     return pattern_dict  # type: ignore[return-value]
 
 
@@ -155,6 +172,17 @@ async def delete_intent_pattern(session: SessionDep, _current_user: CurrentUser,
     if not pattern:
         raise HTTPException(status_code=404, detail="Intent pattern not found")
 
+    # Store pattern_id as string before deletion
+    pattern_id_str = str(pattern.id)
+
     await session.delete(pattern)
     await session.commit()
+
+    # Publish MQTT notification
+    try:
+        await publish_intent_pattern_update(pattern_id_str, "deleted")
+    except Exception as e:
+        logger.error(f"Failed to publish MQTT event for pattern deletion: {e}")
+        # Don't fail the request if MQTT fails
+
     return Message(message="Intent pattern deleted successfully")

@@ -551,7 +551,8 @@ async def seed_skill_intents(
 
             # Check if mapping already exists
             statement = select(SkillIntent).where(
-                SkillIntent.skill_id == skill.id, SkillIntent.intent_pattern_id == pattern.id  # type: ignore[attr-defined]
+                SkillIntent.skill_id == skill.id,
+                SkillIntent.intent_pattern_id == pattern.id,  # type: ignore[attr-defined]
             )
             result = await session.exec(statement)  # type: ignore[arg-type]
             existing = result.first()
