@@ -27,6 +27,7 @@ async def get_mqtt_client():
 
     Raises:
         Exception: If connection to MQTT broker fails.
+
     """
     settings = get_settings()
     async with aiomqtt.Client(
@@ -48,6 +49,7 @@ async def publish_device_update(device_id: str, action: str) -> None:
 
     Raises:
         Exception: If MQTT publish fails.
+
     """
     topic = skill_config.SkillConfig().device_update_topic
     payload: dict[str, Any] = {

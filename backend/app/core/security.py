@@ -10,14 +10,17 @@ from typing import Any, Literal
 from joserfc import jwt as joserfc_jwt
 from joserfc.errors import JoseError
 from joserfc.jwk import KeySet, OctKey
-from passlib.context import CryptContext
+from pwdlib import PasswordHash
+from pwdlib.hashers.argon2 import Argon2Hasher
+from pwdlib.hashers.bcrypt import BcryptHasher
 
 from app.core.config import get_settings
 from app.core.jwks_client import OAuthJWKSClient
 
 logger = logging.getLogger(__name__)
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Use Argon2 (OWASP recommended) as primary, with bcrypt for backward compatibility
+password_hash = PasswordHash((Argon2Hasher(), BcryptHasher()))
 
 ALGORITHM = "HS256"
 JWT_PARTS_COUNT = 3
@@ -157,9 +160,9 @@ def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    return password_hash.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
-    """Hash a password for storage."""
-    return pwd_context.hash(password)
+    """Hash a password for storage using Argon2."""
+    return password_hash.hash(password)

@@ -32,6 +32,7 @@ class MinIOClient:
 
         Raises:
             S3Error: If bucket creation or verification fails.
+
         """
         if cls._instance is None:
             settings = get_settings()
@@ -71,6 +72,7 @@ class MinIOClient:
 
         Raises:
             S3Error: If upload fails.
+
         """
         client = cls.get_client()
         settings = get_settings()
@@ -104,6 +106,7 @@ class MinIOClient:
 
         Raises:
             S3Error: If deletion fails.
+
         """
         client = cls.get_client()
         settings = get_settings()
@@ -128,6 +131,7 @@ class MinIOClient:
 
         Raises:
             S3Error: If URL generation fails.
+
         """
         client = cls.get_client()
         settings = get_settings()

@@ -17,6 +17,7 @@ import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutRoomsRouteImport } from './routes/_layout/rooms'
 import { Route as LayoutPictureDisplayRouteImport } from './routes/_layout/picture-display'
 import { Route as LayoutMonitoringRouteImport } from './routes/_layout/monitoring'
+import { Route as LayoutIntentPatternsRouteImport } from './routes/_layout/intent-patterns'
 import { Route as LayoutDevicesRouteImport } from './routes/_layout/devices'
 import { Route as LayoutDeviceTypesRouteImport } from './routes/_layout/device-types'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
@@ -60,6 +61,11 @@ const LayoutMonitoringRoute = LayoutMonitoringRouteImport.update({
   path: '/monitoring',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutIntentPatternsRoute = LayoutIntentPatternsRouteImport.update({
+  id: '/intent-patterns',
+  path: '/intent-patterns',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutDevicesRoute = LayoutDevicesRouteImport.update({
   id: '/devices',
   path: '/devices',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof LayoutAdminRoute
   '/device-types': typeof LayoutDeviceTypesRoute
   '/devices': typeof LayoutDevicesRoute
+  '/intent-patterns': typeof LayoutIntentPatternsRoute
   '/monitoring': typeof LayoutMonitoringRoute
   '/picture-display': typeof LayoutPictureDisplayRoute
   '/rooms': typeof LayoutRoomsRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/admin': typeof LayoutAdminRoute
   '/device-types': typeof LayoutDeviceTypesRoute
   '/devices': typeof LayoutDevicesRoute
+  '/intent-patterns': typeof LayoutIntentPatternsRoute
   '/monitoring': typeof LayoutMonitoringRoute
   '/picture-display': typeof LayoutPictureDisplayRoute
   '/rooms': typeof LayoutRoomsRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/device-types': typeof LayoutDeviceTypesRoute
   '/_layout/devices': typeof LayoutDevicesRoute
+  '/_layout/intent-patterns': typeof LayoutIntentPatternsRoute
   '/_layout/monitoring': typeof LayoutMonitoringRoute
   '/_layout/picture-display': typeof LayoutPictureDisplayRoute
   '/_layout/rooms': typeof LayoutRoomsRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/device-types'
     | '/devices'
+    | '/intent-patterns'
     | '/monitoring'
     | '/picture-display'
     | '/rooms'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/device-types'
     | '/devices'
+    | '/intent-patterns'
     | '/monitoring'
     | '/picture-display'
     | '/rooms'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/_layout/admin'
     | '/_layout/device-types'
     | '/_layout/devices'
+    | '/_layout/intent-patterns'
     | '/_layout/monitoring'
     | '/_layout/picture-display'
     | '/_layout/rooms'
@@ -218,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutMonitoringRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/intent-patterns': {
+      id: '/_layout/intent-patterns'
+      path: '/intent-patterns'
+      fullPath: '/intent-patterns'
+      preLoaderRoute: typeof LayoutIntentPatternsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/devices': {
       id: '/_layout/devices'
       path: '/devices'
@@ -246,6 +265,7 @@ interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
   LayoutDeviceTypesRoute: typeof LayoutDeviceTypesRoute
   LayoutDevicesRoute: typeof LayoutDevicesRoute
+  LayoutIntentPatternsRoute: typeof LayoutIntentPatternsRoute
   LayoutMonitoringRoute: typeof LayoutMonitoringRoute
   LayoutPictureDisplayRoute: typeof LayoutPictureDisplayRoute
   LayoutRoomsRoute: typeof LayoutRoomsRoute
@@ -257,6 +277,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
   LayoutDeviceTypesRoute: LayoutDeviceTypesRoute,
   LayoutDevicesRoute: LayoutDevicesRoute,
+  LayoutIntentPatternsRoute: LayoutIntentPatternsRoute,
   LayoutMonitoringRoute: LayoutMonitoringRoute,
   LayoutPictureDisplayRoute: LayoutPictureDisplayRoute,
   LayoutRoomsRoute: LayoutRoomsRoute,

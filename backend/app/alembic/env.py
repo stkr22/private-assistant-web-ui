@@ -25,12 +25,12 @@ from app.core.config import get_settings  # noqa
 # AIDEV-NOTE: Import commons models for foreign key resolution during autogenerate.
 # These tables are managed by private-assistant-commons package and won't be migrated,
 # but need to be in metadata so Alembic can resolve foreign key references.
-from private_assistant_commons.database.models import (  # noqa
+from private_assistant_commons.database.device_models import (  # noqa
     GlobalDevice,
     Room,
     DeviceType,
-    Skill,
 )
+from private_assistant_commons.database.skill_models import Skill  # noqa
 
 target_metadata = SQLModel.metadata
 

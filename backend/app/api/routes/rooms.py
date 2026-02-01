@@ -4,7 +4,7 @@ import uuid
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
-from private_assistant_commons.database.models import Room
+from private_assistant_commons.database.device_models import Room
 from sqlmodel import func, select
 
 from app.api.deps import CurrentUser, SessionDep

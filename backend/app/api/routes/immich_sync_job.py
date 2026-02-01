@@ -36,7 +36,7 @@ def _handle_integrity_error(e: IntegrityError) -> None:
     raise HTTPException(status_code=400, detail="Database constraint violation")
 
 
-@router.get("/", response_model=ImmichSyncJobsPublic)
+@router.get("/")
 async def read_sync_jobs(
     session: SessionDep,
     _current_user: CurrentUser,
@@ -53,6 +53,7 @@ async def read_sync_jobs(
 
     Returns:
         Paginated list of sync jobs
+
     """
     # Count total
     count_statement = select(func.count()).select_from(ImmichSyncJob)
@@ -89,6 +90,7 @@ async def read_sync_job(
 
     Raises:
         HTTPException: If sync job not found
+
     """
     job = await session.get(ImmichSyncJob, job_id)
     if not job:
@@ -115,6 +117,7 @@ async def create_sync_job(
 
     Raises:
         HTTPException: If validation fails (duplicate name, device not found, etc.)
+
     """
     job = ImmichSyncJob.model_validate(job_in)
     session.add(job)
@@ -148,6 +151,7 @@ async def update_sync_job(
 
     Raises:
         HTTPException: If sync job not found or validation fails
+
     """
     job = await session.get(ImmichSyncJob, job_id)
     if not job:
@@ -192,6 +196,7 @@ async def delete_sync_job(
 
     Raises:
         HTTPException: If sync job not found
+
     """
     job = await session.get(ImmichSyncJob, job_id)
     if not job:

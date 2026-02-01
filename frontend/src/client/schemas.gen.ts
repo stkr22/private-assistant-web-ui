@@ -238,6 +238,7 @@ export const GlobalDeviceCreateSchema = {
         device_attributes: {
             anyOf: [
                 {
+                    additionalProperties: true,
                     type: 'object'
                 },
                 {
@@ -298,6 +299,7 @@ export const GlobalDevicePublicSchema = {
         device_attributes: {
             anyOf: [
                 {
+                    additionalProperties: true,
                     type: 'object'
                 },
                 {
@@ -394,6 +396,7 @@ export const GlobalDeviceUpdateSchema = {
         device_attributes: {
             anyOf: [
                 {
+                    additionalProperties: true,
                     type: 'object'
                 },
                 {
@@ -457,6 +460,186 @@ export const HealthResponseSchema = {
 
 Attributes:
     status: Current health status of the application.`
+} as const;
+
+export const ImageSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        source_name: {
+            type: 'string',
+            title: 'Source Name',
+            description: 'Source identifier (e.g. manual, unsplash)'
+        },
+        storage_path: {
+            type: 'string',
+            title: 'Storage Path',
+            description: 'MinIO object path'
+        },
+        title: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Title',
+            description: 'Image title for voice responses'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description',
+            description: "Description for 'what am I seeing?'"
+        },
+        author: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Author',
+            description: 'Author/photographer name'
+        },
+        source_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Source Url',
+            description: 'Original source URL'
+        },
+        display_duration_seconds: {
+            type: 'integer',
+            title: 'Display Duration Seconds',
+            description: 'Display duration in seconds',
+            default: 600
+        },
+        priority: {
+            type: 'integer',
+            title: 'Priority',
+            description: 'Priority weight for selection (higher = more likely)',
+            default: 5
+        },
+        original_width: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Original Width',
+            description: 'Image width in pixels'
+        },
+        original_height: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Original Height',
+            description: 'Image height in pixels'
+        },
+        last_displayed_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Last Displayed At',
+            description: 'Last display time for FIFO'
+        },
+        expires_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Expires At',
+            description: 'Expiration time for cleanup'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At',
+            description: 'When record was created'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At',
+            description: 'When record was last updated'
+        },
+        tags: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Tags',
+            description: 'Comma-separated tags for categorization'
+        }
+    },
+    type: 'object',
+    required: ['source_name', 'storage_path'],
+    title: 'Image',
+    description: `Image metadata stored in the database.
+
+Images are fetched from various sources (manual upload, Immich, Unsplash, etc.)
+and stored in MinIO. This table tracks metadata for display scheduling and
+voice command responses.
+
+Attributes:
+    id: Unique identifier for the image
+    source_name: Source identifier (e.g., "manual", "immich", "unsplash")
+    storage_path: Path to image in MinIO bucket
+    title: Optional title for voice responses
+    description: Optional description for "what am I seeing?" queries
+    author: Optional author/photographer name
+    source_url: Optional URL to original source
+    display_duration_seconds: How long to show this image (default 3600)
+    priority: Weight for future priority-based selection (default 0)
+    original_width: Image width in pixels
+    original_height: Image height in pixels
+    last_displayed_at: When the image was last shown (for FIFO selection)
+    expires_at: Optional expiration time for auto-cleanup
+    created_at: When record was created (replaces fetched_at)
+    updated_at: When record was last updated
+    tags: Comma-separated tags for categorization`
 } as const;
 
 export const ImagePublicSchema = {
@@ -1390,6 +1573,205 @@ export const ImmichSyncJobsPublicSchema = {
     description: 'Paginated response for sync jobs.'
 } as const;
 
+export const IntentPatternCreateSchema = {
+    properties: {
+        intent_type: {
+            type: 'string',
+            title: 'Intent Type'
+        },
+        enabled: {
+            type: 'boolean',
+            title: 'Enabled',
+            default: true
+        },
+        priority: {
+            type: 'integer',
+            title: 'Priority',
+            default: 0
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        keywords: {
+            items: {
+                '$ref': '#/components/schemas/IntentPatternKeywordCreate'
+            },
+            type: 'array',
+            title: 'Keywords',
+            default: []
+        }
+    },
+    type: 'object',
+    required: ['intent_type'],
+    title: 'IntentPatternCreate',
+    description: 'Model for creating a new intent pattern with keywords.'
+} as const;
+
+export const IntentPatternKeywordCreateSchema = {
+    properties: {
+        keyword: {
+            type: 'string',
+            title: 'Keyword'
+        },
+        keyword_type: {
+            type: 'string',
+            title: 'Keyword Type',
+            default: 'primary'
+        },
+        is_regex: {
+            type: 'boolean',
+            title: 'Is Regex',
+            default: false
+        },
+        weight: {
+            type: 'number',
+            title: 'Weight',
+            default: 1
+        }
+    },
+    type: 'object',
+    required: ['keyword'],
+    title: 'IntentPatternKeywordCreate',
+    description: 'Model for creating a new keyword (nested in IntentPattern).'
+} as const;
+
+export const IntentPatternKeywordPublicSchema = {
+    properties: {
+        keyword: {
+            type: 'string',
+            title: 'Keyword'
+        },
+        keyword_type: {
+            type: 'string',
+            title: 'Keyword Type',
+            default: 'primary'
+        },
+        is_regex: {
+            type: 'boolean',
+            title: 'Is Regex',
+            default: false
+        },
+        weight: {
+            type: 'number',
+            title: 'Weight',
+            default: 1
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        pattern_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Pattern Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        }
+    },
+    type: 'object',
+    required: ['keyword', 'id', 'pattern_id', 'created_at'],
+    title: 'IntentPatternKeywordPublic',
+    description: 'Public API model for IntentPatternKeyword.'
+} as const;
+
+export const IntentPatternUpdateSchema = {
+    properties: {
+        intent_type: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Intent Type'
+        },
+        enabled: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Enabled'
+        },
+        priority: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Priority'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        keywords: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/IntentPatternKeywordCreate'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Keywords'
+        }
+    },
+    type: 'object',
+    title: 'IntentPatternUpdate',
+    description: 'Model for updating an intent pattern.'
+} as const;
+
+export const IntentPatternsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/app__models_commons_api__IntentPatternPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'IntentPatternsPublic',
+    description: 'Paginated response for intent patterns.'
+} as const;
+
 export const MessageSchema = {
     properties: {
         message: {
@@ -1524,16 +1906,22 @@ export const RoomsPublicSchema = {
     description: 'Paginated response for rooms.'
 } as const;
 
-export const SkillPublicSchema = {
+export const SkillIntentPublicSchema = {
     properties: {
+        skill_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Skill Id'
+        },
+        intent_pattern_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Intent Pattern Id'
+        },
         id: {
             type: 'string',
             format: 'uuid',
             title: 'Id'
-        },
-        name: {
-            type: 'string',
-            title: 'Name'
         },
         created_at: {
             type: 'string',
@@ -1547,9 +1935,76 @@ export const SkillPublicSchema = {
         }
     },
     type: 'object',
+    required: ['skill_id', 'intent_pattern_id', 'id', 'created_at', 'updated_at'],
+    title: 'SkillIntentPublic',
+    description: 'Public API model for SkillIntent.'
+} as const;
+
+export const SkillIntentsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/SkillIntentPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'SkillIntentsPublic',
+    description: 'Paginated response for skill-intents.'
+} as const;
+
+export const SkillPublicSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        help_text: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Help Text'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        },
+        intent_patterns: {
+            items: {
+                '$ref': '#/components/schemas/app__api__routes__monitoring__IntentPatternPublic'
+            },
+            type: 'array',
+            title: 'Intent Patterns',
+            default: []
+        }
+    },
+    type: 'object',
     required: ['id', 'name', 'created_at', 'updated_at'],
     title: 'SkillPublic',
-    description: 'Public schema for Skill.'
+    description: 'Public schema for Skill with supported intent patterns.'
 } as const;
 
 export const SkillsPublicSchema = {
@@ -1685,4 +2140,97 @@ export const ValidationErrorSchema = {
     type: 'object',
     required: ['loc', 'msg', 'type'],
     title: 'ValidationError'
+} as const;
+
+export const app__api__routes__monitoring__IntentPatternPublicSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        intent_type: {
+            type: 'string',
+            title: 'Intent Type'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        priority: {
+            type: 'integer',
+            title: 'Priority'
+        },
+        enabled: {
+            type: 'boolean',
+            title: 'Enabled'
+        }
+    },
+    type: 'object',
+    required: ['id', 'intent_type', 'priority', 'enabled'],
+    title: 'IntentPatternPublic',
+    description: 'Public schema for IntentPattern in monitoring context.'
+} as const;
+
+export const app__models_commons_api__IntentPatternPublicSchema = {
+    properties: {
+        intent_type: {
+            type: 'string',
+            title: 'Intent Type'
+        },
+        enabled: {
+            type: 'boolean',
+            title: 'Enabled',
+            default: true
+        },
+        priority: {
+            type: 'integer',
+            title: 'Priority',
+            default: 0
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        },
+        keywords: {
+            items: {
+                '$ref': '#/components/schemas/IntentPatternKeywordPublic'
+            },
+            type: 'array',
+            title: 'Keywords'
+        }
+    },
+    type: 'object',
+    required: ['intent_type', 'id', 'created_at', 'updated_at', 'keywords'],
+    title: 'IntentPatternPublic',
+    description: 'Public API model for IntentPattern with nested keywords.'
 } as const;

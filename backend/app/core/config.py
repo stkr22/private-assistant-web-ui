@@ -180,5 +180,6 @@ def get_settings() -> Settings:
 
     Returns:
         Configured Settings instance.
+
     """
     return Settings()

@@ -4,11 +4,13 @@ from app.api.routes import (
     device_types,
     devices,
     immich_sync_job,
+    intent_patterns,
     login,
     monitoring,
     picture_display,
     private,
     rooms,
+    skill_intents,
     users,
 )
 from app.core.config import get_settings
@@ -22,6 +24,8 @@ api_router.include_router(device_types.router)
 api_router.include_router(picture_display.router)
 api_router.include_router(immich_sync_job.router)
 api_router.include_router(monitoring.router)
+api_router.include_router(intent_patterns.router)
+api_router.include_router(skill_intents.router)
 
 
 if get_settings().ENVIRONMENT == "local":
