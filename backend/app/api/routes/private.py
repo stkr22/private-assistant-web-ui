@@ -1,3 +1,5 @@
+"""Private API routes for local development."""
+
 from typing import Any
 
 from fastapi import APIRouter
@@ -14,6 +16,8 @@ router = APIRouter(tags=["private"], prefix="/private")
 
 
 class PrivateUserCreate(BaseModel):
+    """Schema for creating users in local dev environment."""
+
     email: str
     password: str
     full_name: str

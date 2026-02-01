@@ -39,6 +39,8 @@ class RoomFactory(factory.Factory):
     """Factory for Room model."""
 
     class Meta:
+        """Factory configuration."""
+
         model = Room
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -51,6 +53,8 @@ class DeviceTypeFactory(factory.Factory):
     """Factory for DeviceType model."""
 
     class Meta:
+        """Factory configuration."""
+
         model = DeviceType
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -63,6 +67,8 @@ class SkillFactory(factory.Factory):
     """Factory for Skill model."""
 
     class Meta:
+        """Factory configuration."""
+
         model = Skill
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -80,6 +86,8 @@ class GlobalDeviceFactory(factory.Factory):
     """
 
     class Meta:
+        """Factory configuration."""
+
         model = GlobalDevice
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -110,6 +118,8 @@ class ImageFactory(factory.Factory):
     """Factory for Image model from skill package."""
 
     class Meta:
+        """Factory configuration."""
+
         model = Image
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -132,6 +142,8 @@ class DeviceDisplayStateFactory(factory.Factory):
     """
 
     class Meta:
+        """Factory configuration."""
+
         model = DeviceDisplayState
 
     global_device_id = factory.LazyFunction(uuid.uuid4)
@@ -145,6 +157,8 @@ class IntentPatternFactory(factory.Factory):
     """Factory for IntentPattern model."""
 
     class Meta:
+        """Factory configuration."""
+
         model = IntentPattern
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -163,6 +177,8 @@ class IntentPatternKeywordFactory(factory.Factory):
     """
 
     class Meta:
+        """Factory configuration."""
+
         model = IntentPatternKeyword
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -182,6 +198,8 @@ class SkillIntentFactory(factory.Factory):
     """
 
     class Meta:
+        """Factory configuration."""
+
         model = SkillIntent
 
     id = factory.LazyFunction(uuid.uuid4)

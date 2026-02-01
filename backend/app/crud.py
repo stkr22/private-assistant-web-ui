@@ -1,3 +1,5 @@
+"""CRUD operations for database models."""
+
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -6,6 +8,7 @@ from app.models import User, UserCreate
 
 
 async def create_user(*, session: AsyncSession, user_create: UserCreate) -> User:
+    """Create a new user."""
     db_obj = User.model_validate(user_create, update={"hashed_password": get_password_hash(user_create.password)})
     session.add(db_obj)
     await session.commit()
@@ -14,6 +17,7 @@ async def create_user(*, session: AsyncSession, user_create: UserCreate) -> User
 
 
 async def get_user_by_email(*, session: AsyncSession, email: str) -> User | None:
+    """Get user by email address."""
     statement = select(User).where(User.email == email)
     result = await session.exec(statement)
     return result.first()
@@ -27,6 +31,7 @@ async def get_user_by_oauth_subject(*, session: AsyncSession, oauth_subject: str
 
 
 async def authenticate(*, session: AsyncSession, email: str, password: str) -> User | None:
+    """Authenticate user by email and password."""
     db_user = await get_user_by_email(session=session, email=email)
     if not db_user:
         return None
