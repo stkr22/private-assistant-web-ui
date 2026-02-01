@@ -5,6 +5,7 @@ import {
   Home,
   Image,
   Layers,
+  MessageSquareText,
   Users,
 } from "lucide-react"
 
@@ -25,6 +26,11 @@ const baseItems: Item[] = [
   { icon: Cpu, title: "Devices", path: "/devices" },
   { icon: DoorClosed, title: "Rooms", path: "/rooms" },
   { icon: Layers, title: "Device Types", path: "/device-types" },
+  {
+    icon: MessageSquareText,
+    title: "Intent Patterns",
+    path: "/intent-patterns",
+  },
   { icon: Image, title: "Picture Display", path: "/picture-display" },
   { icon: Activity, title: "Monitoring", path: "/monitoring" },
 ]

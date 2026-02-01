@@ -1,5 +1,4 @@
-"""
-Script to create all database tables.
+"""Script to create all database tables.
 
 This includes both web-ui specific tables and commons tables from
 the private-assistant-commons package.
@@ -11,11 +10,18 @@ Usage:
 import asyncio
 
 # Import commons models
-from private_assistant_commons.database.models import (  # noqa: F401
+from private_assistant_commons.database.device_models import (  # noqa: F401
     DeviceType,
     GlobalDevice,
     Room,
+)
+from private_assistant_commons.database.intent_pattern_models import (  # noqa: F401
+    IntentPattern,
+    IntentPatternKeyword,
+)
+from private_assistant_commons.database.skill_models import (  # noqa: F401
     Skill,
+    SkillIntent,
 )
 
 # Import picture display models from skill package

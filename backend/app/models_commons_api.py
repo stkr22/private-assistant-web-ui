@@ -21,8 +21,6 @@ class RoomBase(SQLModel):
 class RoomCreate(RoomBase):
     """Model for creating a new room."""
 
-    pass
-
 
 class RoomUpdate(SQLModel):
     """Model for updating a room."""
@@ -54,8 +52,6 @@ class DeviceTypeBase(SQLModel):
 
 class DeviceTypeCreate(DeviceTypeBase):
     """Model for creating a new device type."""
-
-    pass
 
 
 class DeviceTypeUpdate(SQLModel):
@@ -94,8 +90,6 @@ class GlobalDeviceBase(SQLModel):
 class GlobalDeviceCreate(GlobalDeviceBase):
     """Model for creating a new global device."""
 
-    pass
-
 
 class GlobalDeviceUpdate(SQLModel):
     """Model for updating a global device."""
@@ -120,4 +114,104 @@ class GlobalDevicesPublic(SQLModel):
     """Paginated response for global devices."""
 
     data: list[GlobalDevicePublic]
+    count: int
+
+
+# IntentPatternKeyword Models
+class IntentPatternKeywordBase(SQLModel):
+    """Base model for IntentPatternKeyword."""
+
+    keyword: str
+    keyword_type: str = "primary"  # primary or negative
+    is_regex: bool = False
+    weight: float = 1.0
+
+
+class IntentPatternKeywordCreate(IntentPatternKeywordBase):
+    """Model for creating a new keyword (nested in IntentPattern)."""
+
+
+class IntentPatternKeywordUpdate(SQLModel):
+    """Model for updating a keyword."""
+
+    keyword: str | None = None
+    keyword_type: str | None = None
+    is_regex: bool | None = None
+    weight: float | None = None
+
+
+class IntentPatternKeywordPublic(IntentPatternKeywordBase):
+    """Public API model for IntentPatternKeyword."""
+
+    id: uuid.UUID
+    pattern_id: uuid.UUID
+    created_at: datetime
+
+
+# IntentPattern Models
+class IntentPatternBase(SQLModel):
+    """Base model for IntentPattern."""
+
+    intent_type: str
+    enabled: bool = True
+    priority: int = 0
+    description: str | None = None
+
+
+class IntentPatternCreate(IntentPatternBase):
+    """Model for creating a new intent pattern with keywords."""
+
+    keywords: list[IntentPatternKeywordCreate] = []
+
+
+class IntentPatternUpdate(SQLModel):
+    """Model for updating an intent pattern."""
+
+    intent_type: str | None = None
+    enabled: bool | None = None
+    priority: int | None = None
+    description: str | None = None
+    keywords: list[IntentPatternKeywordCreate] | None = None  # Replace all keywords
+
+
+class IntentPatternPublic(IntentPatternBase):
+    """Public API model for IntentPattern with nested keywords."""
+
+    id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
+    keywords: list[IntentPatternKeywordPublic]
+
+
+class IntentPatternsPublic(SQLModel):
+    """Paginated response for intent patterns."""
+
+    data: list[IntentPatternPublic]
+    count: int
+
+
+# SkillIntent Models
+class SkillIntentBase(SQLModel):
+    """Base model for SkillIntent."""
+
+    skill_id: uuid.UUID
+    intent_pattern_id: uuid.UUID
+
+
+class SkillIntentCreate(SkillIntentBase):
+    """Model for creating a new skill-intent mapping."""
+
+
+class SkillIntentPublic(SkillIntentBase):
+    """Public API model for SkillIntent."""
+
+    id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
+
+
+class SkillIntentsPublic(SQLModel):
+    """Paginated response for skill-intents."""
+
+    data: list[SkillIntentPublic]
     count: int

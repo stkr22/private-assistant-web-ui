@@ -102,6 +102,8 @@ uv run ruff format .
 ```bash
 cd frontend
 
+sudo apt update && sudo apt install nodejs npm -y
+
 # Start dev server
 npm run dev
 

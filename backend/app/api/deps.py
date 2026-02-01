@@ -1,3 +1,5 @@
+"""API dependencies and security utilities."""
+
 import logging
 from collections.abc import AsyncGenerator
 from http import HTTPStatus
@@ -22,6 +24,7 @@ reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{get_settings().API_V1_STR}/lo
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """Get database session dependency."""
     async with AsyncSession(get_engine()) as session:
         yield session
 
@@ -139,6 +142,7 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
 def get_current_active_superuser(current_user: CurrentUser) -> User:
+    """Verify current user is a superuser."""
     if not current_user.is_superuser:
         raise HTTPException(status_code=403, detail="The user doesn't have enough privileges")
     return current_user

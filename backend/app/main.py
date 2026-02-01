@@ -55,7 +55,7 @@ if settings.all_cors_origins:
 
 
 # Health check endpoint at root level
-@app.get("/health", response_model=HealthResponse, tags=["infrastructure"])
+@app.get("/health", tags=["infrastructure"])
 async def health() -> HealthResponse:
     """Health check endpoint.
 
@@ -63,6 +63,7 @@ async def health() -> HealthResponse:
 
     Returns:
         HealthResponse: Current health status.
+
     """
     return HealthResponse()
 

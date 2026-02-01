@@ -1,3 +1,5 @@
+"""Database connection and initialization."""
+
 from functools import lru_cache
 
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
@@ -21,6 +23,7 @@ def get_engine() -> AsyncEngine:
 
 
 async def init_db(session: AsyncSession) -> None:
+    """Initialize database with first superuser."""
     # Tables should be created with Alembic migrations
     # Models are already imported and registered from app.models
     settings = get_settings()

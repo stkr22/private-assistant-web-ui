@@ -9,7 +9,9 @@ from datetime import datetime
 from typing import Any
 
 import factory
-from private_assistant_commons.database.models import DeviceType, GlobalDevice, Room, Skill
+from private_assistant_commons.database.device_models import DeviceType, GlobalDevice, Room
+from private_assistant_commons.database.intent_pattern_models import IntentPattern, IntentPatternKeyword
+from private_assistant_commons.database.skill_models import Skill, SkillIntent
 from private_assistant_picture_display_skill.models.device import DeviceDisplayState
 from private_assistant_picture_display_skill.models.image import Image
 
@@ -37,6 +39,8 @@ class RoomFactory(factory.Factory):
     """Factory for Room model."""
 
     class Meta:
+        """Factory configuration."""
+
         model = Room
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -49,6 +53,8 @@ class DeviceTypeFactory(factory.Factory):
     """Factory for DeviceType model."""
 
     class Meta:
+        """Factory configuration."""
+
         model = DeviceType
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -61,10 +67,13 @@ class SkillFactory(factory.Factory):
     """Factory for Skill model."""
 
     class Meta:
+        """Factory configuration."""
+
         model = Skill
 
     id = factory.LazyFunction(uuid.uuid4)
     name = factory.Iterator(SKILLS)
+    help_text = factory.Faker("sentence", nb_words=10)
     created_at = factory.LazyFunction(utcnow)
     updated_at = factory.LazyFunction(utcnow)
 
@@ -77,6 +86,8 @@ class GlobalDeviceFactory(factory.Factory):
     """
 
     class Meta:
+        """Factory configuration."""
+
         model = GlobalDevice
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -107,6 +118,8 @@ class ImageFactory(factory.Factory):
     """Factory for Image model from skill package."""
 
     class Meta:
+        """Factory configuration."""
+
         model = Image
 
     id = factory.LazyFunction(uuid.uuid4)
@@ -129,6 +142,8 @@ class DeviceDisplayStateFactory(factory.Factory):
     """
 
     class Meta:
+        """Factory configuration."""
+
         model = DeviceDisplayState
 
     global_device_id = factory.LazyFunction(uuid.uuid4)
@@ -136,6 +151,62 @@ class DeviceDisplayStateFactory(factory.Factory):
     current_image_id = None
     displayed_since = None
     scheduled_next_at = factory.LazyFunction(utcnow)
+
+
+class IntentPatternFactory(factory.Factory):
+    """Factory for IntentPattern model."""
+
+    class Meta:
+        """Factory configuration."""
+
+        model = IntentPattern
+
+    id = factory.LazyFunction(uuid.uuid4)
+    intent_type = factory.Iterator(["device.on", "device.off", "media.play", "media.stop"])
+    enabled = True
+    priority = factory.Faker("random_int", min=1, max=100)
+    description = factory.Faker("sentence", nb_words=8)
+    created_at = factory.LazyFunction(utcnow)
+    updated_at = factory.LazyFunction(utcnow)
+
+
+class IntentPatternKeywordFactory(factory.Factory):
+    """Factory for IntentPatternKeyword model.
+
+    AIDEV-NOTE: Requires pattern_id to be passed explicitly.
+    """
+
+    class Meta:
+        """Factory configuration."""
+
+        model = IntentPatternKeyword
+
+    id = factory.LazyFunction(uuid.uuid4)
+    pattern_id = factory.LazyFunction(uuid.uuid4)
+    keyword = factory.Faker("word")
+    keyword_type = "primary"
+    is_regex = False
+    weight = 1.0
+    created_at = factory.LazyFunction(utcnow)
+
+
+class SkillIntentFactory(factory.Factory):
+    """Factory for SkillIntent model.
+
+    AIDEV-NOTE: Requires skill_id and intent_pattern_id to be passed explicitly.
+    Skills auto-register their intents, so this is mainly for testing.
+    """
+
+    class Meta:
+        """Factory configuration."""
+
+        model = SkillIntent
+
+    id = factory.LazyFunction(uuid.uuid4)
+    skill_id = factory.LazyFunction(uuid.uuid4)
+    intent_pattern_id = factory.LazyFunction(uuid.uuid4)
+    created_at = factory.LazyFunction(utcnow)
+    updated_at = factory.LazyFunction(utcnow)
 
 
 # Pre-built data collections for convenience

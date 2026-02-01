@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { DevicesReadDevicesData, DevicesReadDevicesResponse, DevicesCreateDeviceData, DevicesCreateDeviceResponse, DevicesReadDeviceData, DevicesReadDeviceResponse, DevicesUpdateDeviceData, DevicesUpdateDeviceResponse, DevicesDeleteDeviceData, DevicesDeleteDeviceResponse, DeviceTypesReadDeviceTypesData, DeviceTypesReadDeviceTypesResponse, DeviceTypesCreateDeviceTypeData, DeviceTypesCreateDeviceTypeResponse, DeviceTypesReadDeviceTypeData, DeviceTypesReadDeviceTypeResponse, DeviceTypesUpdateDeviceTypeData, DeviceTypesUpdateDeviceTypeResponse, DeviceTypesDeleteDeviceTypeData, DeviceTypesDeleteDeviceTypeResponse, ImmichSyncJobsReadSyncJobsData, ImmichSyncJobsReadSyncJobsResponse, ImmichSyncJobsCreateSyncJobData, ImmichSyncJobsCreateSyncJobResponse, ImmichSyncJobsReadSyncJobData, ImmichSyncJobsReadSyncJobResponse, ImmichSyncJobsUpdateSyncJobData, ImmichSyncJobsUpdateSyncJobResponse, ImmichSyncJobsDeleteSyncJobData, ImmichSyncJobsDeleteSyncJobResponse, InfrastructureHealthResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, MonitoringReadSkillsResponse, PictureDisplayUploadImageData, PictureDisplayUploadImageResponse, PictureDisplayReadImagesData, PictureDisplayReadImagesResponse, PictureDisplayReadImageData, PictureDisplayReadImageResponse, PictureDisplayUpdateImageData, PictureDisplayUpdateImageResponse, PictureDisplayDeleteImageData, PictureDisplayDeleteImageResponse, PictureDisplayGetImageUrlData, PictureDisplayGetImageUrlResponse, PrivateCreateUserData, PrivateCreateUserResponse, RoomsReadRoomsData, RoomsReadRoomsResponse, RoomsCreateRoomData, RoomsCreateRoomResponse, RoomsReadRoomData, RoomsReadRoomResponse, RoomsUpdateRoomData, RoomsUpdateRoomResponse, RoomsDeleteRoomData, RoomsDeleteRoomResponse, UsersReadUsersData, UsersReadUsersResponse, UsersReadUserMeResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersDeleteUserData, UsersDeleteUserResponse } from './types.gen';
+import type { DevicesReadDevicesData, DevicesReadDevicesResponse, DevicesCreateDeviceData, DevicesCreateDeviceResponse, DevicesReadDeviceData, DevicesReadDeviceResponse, DevicesUpdateDeviceData, DevicesUpdateDeviceResponse, DevicesDeleteDeviceData, DevicesDeleteDeviceResponse, DeviceTypesReadDeviceTypesData, DeviceTypesReadDeviceTypesResponse, DeviceTypesCreateDeviceTypeData, DeviceTypesCreateDeviceTypeResponse, DeviceTypesReadDeviceTypeData, DeviceTypesReadDeviceTypeResponse, DeviceTypesUpdateDeviceTypeData, DeviceTypesUpdateDeviceTypeResponse, DeviceTypesDeleteDeviceTypeData, DeviceTypesDeleteDeviceTypeResponse, ImmichSyncJobsReadSyncJobsData, ImmichSyncJobsReadSyncJobsResponse, ImmichSyncJobsCreateSyncJobData, ImmichSyncJobsCreateSyncJobResponse, ImmichSyncJobsReadSyncJobData, ImmichSyncJobsReadSyncJobResponse, ImmichSyncJobsUpdateSyncJobData, ImmichSyncJobsUpdateSyncJobResponse, ImmichSyncJobsDeleteSyncJobData, ImmichSyncJobsDeleteSyncJobResponse, InfrastructureHealthResponse, IntentPatternsReadIntentPatternsData, IntentPatternsReadIntentPatternsResponse, IntentPatternsCreateIntentPatternData, IntentPatternsCreateIntentPatternResponse, IntentPatternsReadIntentPatternData, IntentPatternsReadIntentPatternResponse, IntentPatternsUpdateIntentPatternData, IntentPatternsUpdateIntentPatternResponse, IntentPatternsDeleteIntentPatternData, IntentPatternsDeleteIntentPatternResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, MonitoringReadSkillsResponse, PictureDisplayUploadImageData, PictureDisplayUploadImageResponse, PictureDisplayReadImagesData, PictureDisplayReadImagesResponse, PictureDisplayReadImageData, PictureDisplayReadImageResponse, PictureDisplayUpdateImageData, PictureDisplayUpdateImageResponse, PictureDisplayDeleteImageData, PictureDisplayDeleteImageResponse, PictureDisplayGetImageUrlData, PictureDisplayGetImageUrlResponse, PrivateCreateUserData, PrivateCreateUserResponse, RoomsReadRoomsData, RoomsReadRoomsResponse, RoomsCreateRoomData, RoomsCreateRoomResponse, RoomsReadRoomData, RoomsReadRoomResponse, RoomsUpdateRoomData, RoomsUpdateRoomResponse, RoomsDeleteRoomData, RoomsDeleteRoomResponse, SkillIntentsReadSkillIntentsData, SkillIntentsReadSkillIntentsResponse, UsersReadUsersData, UsersReadUsersResponse, UsersReadUserMeResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersDeleteUserData, UsersDeleteUserResponse } from './types.gen';
 
 export class DevicesService {
     /**
@@ -412,6 +412,117 @@ export class InfrastructureService {
     }
 }
 
+export class IntentPatternsService {
+    /**
+     * Read Intent Patterns
+     * Retrieve intent patterns with pagination and nested keywords.
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns IntentPatternsPublic Successful Response
+     * @throws ApiError
+     */
+    public static readIntentPatterns(data: IntentPatternsReadIntentPatternsData = {}): CancelablePromise<IntentPatternsReadIntentPatternsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/intent-patterns/',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Intent Pattern
+     * Create new intent pattern with keywords.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns app__models_commons_api__IntentPatternPublic Successful Response
+     * @throws ApiError
+     */
+    public static createIntentPattern(data: IntentPatternsCreateIntentPatternData): CancelablePromise<IntentPatternsCreateIntentPatternResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/intent-patterns/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Read Intent Pattern
+     * Get intent pattern by ID with keywords.
+     * @param data The data for the request.
+     * @param data.patternId
+     * @returns app__models_commons_api__IntentPatternPublic Successful Response
+     * @throws ApiError
+     */
+    public static readIntentPattern(data: IntentPatternsReadIntentPatternData): CancelablePromise<IntentPatternsReadIntentPatternResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/intent-patterns/{pattern_id}',
+            path: {
+                pattern_id: data.patternId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Intent Pattern
+     * Update intent pattern and optionally replace all keywords.
+     * @param data The data for the request.
+     * @param data.patternId
+     * @param data.requestBody
+     * @returns app__models_commons_api__IntentPatternPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateIntentPattern(data: IntentPatternsUpdateIntentPatternData): CancelablePromise<IntentPatternsUpdateIntentPatternResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/intent-patterns/{pattern_id}',
+            path: {
+                pattern_id: data.patternId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Intent Pattern
+     * Delete intent pattern (keywords cascade delete).
+     * @param data The data for the request.
+     * @param data.patternId
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteIntentPattern(data: IntentPatternsDeleteIntentPatternData): CancelablePromise<IntentPatternsDeleteIntentPatternResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/intent-patterns/{pattern_id}',
+            path: {
+                pattern_id: data.patternId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
 export class LoginService {
     /**
      * Login Access Token
@@ -450,7 +561,7 @@ export class LoginService {
 export class MonitoringService {
     /**
      * Read Skills
-     * List all registered skills.
+     * List all registered skills with their supported intent patterns.
      * @returns SkillsPublic Successful Response
      * @throws ApiError
      */
@@ -484,7 +595,7 @@ export class PictureDisplayService {
      * HTTPException: If file validation fails or upload fails
      * @param data The data for the request.
      * @param data.formData
-     * @returns ImagePublic Successful Response
+     * @returns Image Successful Response
      * @throws ApiError
      */
     public static uploadImage(data: PictureDisplayUploadImageData): CancelablePromise<PictureDisplayUploadImageResponse> {
@@ -794,6 +905,35 @@ export class RoomsService {
             url: '/api/v1/rooms/{room_id}',
             path: {
                 room_id: data.roomId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class SkillIntentsService {
+    /**
+     * Read Skill Intents
+     * Retrieve skill-intent mappings with optional skill filter.
+     *
+     * Skills auto-register their intents, so this endpoint is read-only.
+     * @param data The data for the request.
+     * @param data.skillId
+     * @param data.skip
+     * @param data.limit
+     * @returns SkillIntentsPublic Successful Response
+     * @throws ApiError
+     */
+    public static readSkillIntents(data: SkillIntentsReadSkillIntentsData = {}): CancelablePromise<SkillIntentsReadSkillIntentsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/skill-intents/',
+            query: {
+                skill_id: data.skillId,
+                skip: data.skip,
+                limit: data.limit
             },
             errors: {
                 422: 'Validation Error'

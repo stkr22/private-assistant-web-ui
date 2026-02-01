@@ -2,6 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { Check, Copy } from "lucide-react"
 
 import type { SkillPublic } from "@/client"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard"
 import { cn } from "@/lib/utils"
@@ -45,6 +46,42 @@ export const columns: ColumnDef<SkillPublic>[] = [
     cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
     enableColumnFilter: false,
     enableSorting: true,
+  },
+  {
+    accessorKey: "intent_patterns",
+    header: "Supported Intents",
+    cell: ({ row }) => {
+      const intents = row.original.intent_patterns || []
+      if (intents.length === 0) {
+        return <span className="text-muted-foreground text-sm">None</span>
+      }
+      return (
+        <div className="flex flex-wrap gap-1">
+          {intents.map((intent) => (
+            <Badge
+              key={intent.id}
+              variant={intent.enabled ? "default" : "secondary"}
+              className="text-xs font-mono"
+            >
+              {intent.intent_type}
+            </Badge>
+          ))}
+        </div>
+      )
+    },
+    enableColumnFilter: false,
+    enableSorting: false,
+  },
+  {
+    accessorKey: "help_text",
+    header: "Help Text",
+    cell: ({ row }) => (
+      <span className="text-sm text-muted-foreground">
+        {row.original.help_text || "-"}
+      </span>
+    ),
+    enableColumnFilter: false,
+    enableSorting: false,
   },
   {
     accessorKey: "created_at",

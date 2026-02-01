@@ -15,9 +15,11 @@ import asyncio
 import contextlib
 import logging
 import sys
-from typing import TypeVar
+from typing import TypedDict, TypeVar
 
-from private_assistant_commons.database.models import DeviceType, GlobalDevice, Room, Skill
+from private_assistant_commons.database.device_models import DeviceType, GlobalDevice, Room
+from private_assistant_commons.database.intent_pattern_models import IntentPattern, IntentPatternKeyword
+from private_assistant_commons.database.skill_models import Skill, SkillIntent
 from private_assistant_picture_display_skill.models.device import DeviceDisplayState
 from private_assistant_picture_display_skill.models.image import Image
 from sqlalchemy import delete
@@ -28,6 +30,9 @@ from app.core.db import get_engine
 
 from .factories import (
     DeviceDisplayStateFactory,
+    IntentPatternFactory,
+    IntentPatternKeywordFactory,
+    SkillIntentFactory,
     build_all_device_types,
     build_all_images,
     build_all_rooms,
@@ -67,6 +72,9 @@ async def check_existing_data(session: AsyncSession) -> dict[str, int]:
         (GlobalDevice, "global_devices"),
         (Image, "images"),
         (DeviceDisplayState, "device_display_states"),
+        (IntentPattern, "intent_patterns"),
+        (IntentPatternKeyword, "intent_pattern_keywords"),
+        (SkillIntent, "skill_intents"),
     ]:
         try:
             result = await session.exec(select(model))  # type: ignore[arg-type, var-annotated]
@@ -89,6 +97,12 @@ async def clear_data(session: AsyncSession) -> None:
         await session.exec(delete(DeviceDisplayState))  # type: ignore[call-overload]
     with contextlib.suppress(Exception):
         await session.exec(delete(Image))  # type: ignore[call-overload]
+    with contextlib.suppress(Exception):
+        await session.exec(delete(SkillIntent))  # type: ignore[call-overload]
+    with contextlib.suppress(Exception):
+        await session.exec(delete(IntentPatternKeyword))  # type: ignore[call-overload]
+    with contextlib.suppress(Exception):
+        await session.exec(delete(IntentPattern))  # type: ignore[call-overload]
     await session.exec(delete(GlobalDevice))  # type: ignore[call-overload]
     # Note: Room, DeviceType, Skill are from commons - be careful about deleting
 
@@ -250,12 +264,323 @@ async def seed_device_display_states(
     return display_states
 
 
+class KeywordConfig(TypedDict):
+    """Type definition for keyword configuration."""
+
+    keyword: str
+    keyword_type: str
+    weight: float
+
+
+class IntentConfig(TypedDict):
+    """Type definition for intent pattern configuration."""
+
+    intent_type: str
+    description: str
+    priority: int
+    keywords: list[KeywordConfig]
+
+
+async def seed_intent_patterns(session: AsyncSession) -> dict[str, IntentPattern]:
+    """Seed IntentPattern records with realistic intent types and keywords.
+
+    Returns:
+        Dictionary mapping intent_type to IntentPattern for easy linking.
+
+    """
+    logger.info("Seeding intent patterns...")
+
+    # Define intent patterns matching IntentType enum from private-assistant-commons
+    intent_configs: list[IntentConfig] = [
+        # Device Control
+        {
+            "intent_type": "device.on",
+            "description": "Turn on a device",
+            "priority": 100,
+            "keywords": [
+                {"keyword": "turn on", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "switch on", "keyword_type": "primary", "weight": 0.9},
+                {"keyword": "activate", "keyword_type": "primary", "weight": 0.8},
+            ],
+        },
+        {
+            "intent_type": "device.off",
+            "description": "Turn off a device",
+            "priority": 100,
+            "keywords": [
+                {"keyword": "turn off", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "switch off", "keyword_type": "primary", "weight": 0.9},
+                {"keyword": "deactivate", "keyword_type": "primary", "weight": 0.8},
+            ],
+        },
+        {
+            "intent_type": "device.set",
+            "description": "Set device to a specific state or value",
+            "priority": 95,
+            "keywords": [
+                {"keyword": "set", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "adjust", "keyword_type": "primary", "weight": 0.9},
+                {"keyword": "change", "keyword_type": "primary", "weight": 0.8},
+            ],
+        },
+        {
+            "intent_type": "device.open",
+            "description": "Open a device (blinds, curtains, doors, etc.)",
+            "priority": 95,
+            "keywords": [
+                {"keyword": "open", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "raise", "keyword_type": "primary", "weight": 0.8},
+            ],
+        },
+        {
+            "intent_type": "device.close",
+            "description": "Close a device (blinds, curtains, doors, etc.)",
+            "priority": 95,
+            "keywords": [
+                {"keyword": "close", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "lower", "keyword_type": "primary", "weight": 0.8},
+            ],
+        },
+        # Media Control
+        {
+            "intent_type": "media.play",
+            "description": "Play media content",
+            "priority": 90,
+            "keywords": [
+                {"keyword": "play", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "start", "keyword_type": "primary", "weight": 0.8},
+                {"keyword": "resume", "keyword_type": "primary", "weight": 0.7},
+            ],
+        },
+        {
+            "intent_type": "media.stop",
+            "description": "Stop media playback",
+            "priority": 90,
+            "keywords": [
+                {"keyword": "stop", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "pause", "keyword_type": "primary", "weight": 0.8},
+            ],
+        },
+        {
+            "intent_type": "media.next",
+            "description": "Skip to next media track",
+            "priority": 85,
+            "keywords": [
+                {"keyword": "next", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "skip", "keyword_type": "primary", "weight": 0.9},
+            ],
+        },
+        {
+            "intent_type": "media.volume_up",
+            "description": "Increase media volume",
+            "priority": 85,
+            "keywords": [
+                {"keyword": "volume up", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "louder", "keyword_type": "primary", "weight": 0.9},
+                {"keyword": "increase volume", "keyword_type": "primary", "weight": 0.9},
+            ],
+        },
+        {
+            "intent_type": "media.volume_down",
+            "description": "Decrease media volume",
+            "priority": 85,
+            "keywords": [
+                {"keyword": "volume down", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "quieter", "keyword_type": "primary", "weight": 0.9},
+                {"keyword": "decrease volume", "keyword_type": "primary", "weight": 0.9},
+            ],
+        },
+        {
+            "intent_type": "media.volume_set",
+            "description": "Set media volume to specific level",
+            "priority": 85,
+            "keywords": [
+                {"keyword": "set volume", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "volume", "keyword_type": "primary", "weight": 0.8},
+            ],
+        },
+        # Queries
+        {
+            "intent_type": "device.query",
+            "description": "Query device status or state",
+            "priority": 80,
+            "keywords": [
+                {"keyword": "what is", "keyword_type": "primary", "weight": 0.9},
+                {"keyword": "how is", "keyword_type": "primary", "weight": 0.9},
+                {"keyword": "is", "keyword_type": "primary", "weight": 0.7},
+            ],
+        },
+        {
+            "intent_type": "media.query",
+            "description": "Query media information",
+            "priority": 80,
+            "keywords": [
+                {"keyword": "what's playing", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "what song", "keyword_type": "primary", "weight": 0.9},
+            ],
+        },
+        {
+            "intent_type": "data.query",
+            "description": "Query general data or information",
+            "priority": 75,
+            "keywords": [
+                {"keyword": "what", "keyword_type": "primary", "weight": 0.8},
+                {"keyword": "tell me", "keyword_type": "primary", "weight": 0.8},
+            ],
+        },
+        # Scene/Automation
+        {
+            "intent_type": "scene.apply",
+            "description": "Apply a scene or automation",
+            "priority": 85,
+            "keywords": [
+                {"keyword": "activate scene", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "scene", "keyword_type": "primary", "weight": 0.8},
+            ],
+        },
+        # Time/Scheduling
+        {
+            "intent_type": "schedule.set",
+            "description": "Set a schedule or timer",
+            "priority": 80,
+            "keywords": [
+                {"keyword": "schedule", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "set timer", "keyword_type": "primary", "weight": 1.0},
+            ],
+        },
+        {
+            "intent_type": "schedule.cancel",
+            "description": "Cancel a schedule or timer",
+            "priority": 80,
+            "keywords": [
+                {"keyword": "cancel schedule", "keyword_type": "primary", "weight": 1.0},
+                {"keyword": "cancel timer", "keyword_type": "primary", "weight": 1.0},
+            ],
+        },
+    ]
+
+    patterns: dict[str, IntentPattern] = {}
+
+    for config in intent_configs:
+        # Check if pattern already exists
+        statement = select(IntentPattern).where(IntentPattern.intent_type == config["intent_type"])  # type: ignore[attr-defined]
+        result = await session.exec(statement)  # type: ignore[arg-type]
+        existing = result.first()
+
+        if existing:
+            patterns[config["intent_type"]] = existing
+            logger.debug(f"IntentPattern '{config['intent_type']}' already exists")
+            continue
+
+        # Create new pattern
+        pattern = IntentPatternFactory.build(
+            intent_type=config["intent_type"],
+            description=config["description"],
+            priority=config["priority"],
+            enabled=True,
+        )
+        session.add(pattern)
+        await session.flush()
+
+        # Create keywords for this pattern
+        for kw_config in config["keywords"]:
+            keyword = IntentPatternKeywordFactory.build(
+                pattern_id=pattern.id,
+                keyword=kw_config["keyword"],
+                keyword_type=kw_config["keyword_type"],
+                weight=kw_config["weight"],
+                is_regex=False,
+            )
+            session.add(keyword)
+
+        await session.flush()
+        patterns[config["intent_type"]] = pattern
+        logger.debug(f"Created IntentPattern '{config['intent_type']}' with {len(config['keywords'])} keywords")
+
+    logger.info(f"Seeded {len(patterns)} intent patterns")
+    return patterns
+
+
+async def seed_skill_intents(
+    session: AsyncSession,
+    skills: dict[str, Skill],
+    intent_patterns: dict[str, IntentPattern],
+) -> list[SkillIntent]:
+    """Link skills to their supported intent patterns.
+
+    Args:
+        session: Database session
+        skills: Dictionary of skills by name
+        intent_patterns: Dictionary of intent patterns by intent_type
+
+    """
+    logger.info("Seeding skill intents...")
+
+    # Define which skills support which intents (using valid IntentType values)
+    skill_intent_mapping = {
+        "switch": ["device.on", "device.off", "device.query"],
+        "curtain": ["device.open", "device.close", "device.query"],
+        "spotify": [
+            "media.play",
+            "media.stop",
+            "media.next",
+            "media.volume_up",
+            "media.volume_down",
+            "media.volume_set",
+            "media.query",
+        ],
+        "climate": ["device.set", "device.on", "device.off", "device.query"],
+        "picture-display": ["device.query"],
+        "iot-state": ["device.query", "data.query"],
+        "scene": ["scene.apply", "device.query"],
+    }
+
+    skill_intents: list[SkillIntent] = []
+
+    for skill_name, intent_types in skill_intent_mapping.items():
+        skill = skills.get(skill_name)
+        if not skill:
+            logger.warning(f"Skill '{skill_name}' not found, skipping intent mapping")
+            continue
+
+        for intent_type in intent_types:
+            pattern = intent_patterns.get(intent_type)
+            if not pattern:
+                logger.warning(f"IntentPattern '{intent_type}' not found, skipping")
+                continue
+
+            # Check if mapping already exists
+            statement = select(SkillIntent).where(
+                SkillIntent.skill_id == skill.id, SkillIntent.intent_pattern_id == pattern.id  # type: ignore[attr-defined]
+            )
+            result = await session.exec(statement)  # type: ignore[arg-type]
+            existing = result.first()
+
+            if existing:
+                skill_intents.append(existing)
+                continue
+
+            # Create new mapping
+            skill_intent = SkillIntentFactory.build(
+                skill_id=skill.id,
+                intent_pattern_id=pattern.id,
+            )
+            session.add(skill_intent)
+            await session.flush()
+            skill_intents.append(skill_intent)
+            logger.debug(f"Linked skill '{skill_name}' to intent '{intent_type}'")
+
+    logger.info(f"Seeded {len(skill_intents)} skill intent mappings")
+    return skill_intents
+
+
 async def seed_database_async(clean: bool = False, dry_run: bool = False) -> None:
-    """Main async seeding function.
+    """Seed the database with initial data.
 
     Args:
         clean: If True, clear existing data before seeding
         dry_run: If True, preview changes without committing
+
     """
     logger.info("Starting database seeding...")
 
@@ -266,7 +591,10 @@ async def seed_database_async(clean: bool = False, dry_run: bool = False) -> Non
 
         if dry_run:
             logger.info("DRY RUN - No changes will be made")
-            logger.info("Would seed: 8 rooms, 10 device types, 7 skills, ~40 devices, 3 images")
+            logger.info(
+                "Would seed: 8 rooms, 10 device types, 7 skills, ~40 devices, "
+                "3 images, 17 intent patterns, ~22 skill intents"
+            )
             return
 
         if clean:
@@ -277,11 +605,13 @@ async def seed_database_async(clean: bool = False, dry_run: bool = False) -> Non
         rooms = await seed_rooms(session)
         device_types = await seed_device_types(session)
         skills = await seed_skills(session)
+        intent_patterns = await seed_intent_patterns(session)
 
         # 2. Dependent tables
         devices = await seed_global_devices(session, rooms, device_types, skills)
         await seed_images(session)
         await seed_device_display_states(session, devices, device_types)
+        await seed_skill_intents(session, skills, intent_patterns)
 
         # Final commit
         await session.commit()
@@ -293,7 +623,7 @@ async def seed_database_async(clean: bool = False, dry_run: bool = False) -> Non
 
 
 def seed_database(clean: bool = False, dry_run: bool = False) -> None:
-    """Synchronous wrapper for async seeding function."""
+    """Run async seeding function synchronously."""
     asyncio.run(seed_database_async(clean=clean, dry_run=dry_run))
 
 

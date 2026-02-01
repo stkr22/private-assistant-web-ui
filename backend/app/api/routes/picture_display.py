@@ -3,7 +3,7 @@
 import logging
 import uuid
 from datetime import datetime
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from private_assistant_picture_display_skill.models.image import Image
@@ -27,17 +27,17 @@ class PresignedUrlResponse(BaseModel):
     expires_in_seconds: int
 
 
-@router.post("/images/upload", response_model=ImagePublic)
+@router.post("/images/upload")
 async def upload_image(  # noqa: PLR0913 - form fields require separate parameters
     *,
     session: SessionDep,
     _current_user: CurrentUser,
-    file: UploadFile = File(...),  # noqa: B008
-    title: str | None = Form(None),
-    description: str | None = Form(None),
-    tags: str | None = Form(None),
-    display_duration_seconds: int = Form(3600),
-    priority: int = Form(0),
+    file: Annotated[UploadFile, File()],
+    title: Annotated[str | None, Form()] = None,
+    description: Annotated[str | None, Form()] = None,
+    tags: Annotated[str | None, Form()] = None,
+    display_duration_seconds: Annotated[int, Form()] = 3600,
+    priority: Annotated[int, Form()] = 0,
 ) -> Image:
     """Upload image to MinIO and create database record.
 
@@ -56,6 +56,7 @@ async def upload_image(  # noqa: PLR0913 - form fields require separate paramete
 
     Raises:
         HTTPException: If file validation fails or upload fails
+
     """
     # Validate file type
     if not file.content_type or not file.content_type.startswith("image/"):
@@ -91,7 +92,7 @@ async def upload_image(  # noqa: PLR0913 - form fields require separate paramete
     return image
 
 
-@router.get("/images/", response_model=ImagesPublic)
+@router.get("/images/")
 async def read_images(
     session: SessionDep,
     _current_user: CurrentUser,
@@ -108,6 +109,7 @@ async def read_images(
 
     Returns:
         Paginated list of images
+
     """
     # Count total
     count_statement = select(func.count()).select_from(Image)
@@ -141,6 +143,7 @@ async def read_image(session: SessionDep, _current_user: CurrentUser, image_id: 
 
     Raises:
         HTTPException: If image not found
+
     """
     image = await session.get(Image, image_id)
     if not image:
@@ -148,7 +151,7 @@ async def read_image(session: SessionDep, _current_user: CurrentUser, image_id: 
     return image
 
 
-@router.get("/images/{image_id}/url", response_model=PresignedUrlResponse)
+@router.get("/images/{image_id}/url")
 async def get_image_url(
     session: SessionDep,
     _current_user: CurrentUser,
@@ -168,6 +171,7 @@ async def get_image_url(
 
     Raises:
         HTTPException: If image not found or URL generation fails
+
     """
     image = await session.get(Image, image_id)
     if not image:
@@ -203,6 +207,7 @@ async def update_image(
 
     Raises:
         HTTPException: If image not found
+
     """
     image = await session.get(Image, image_id)
     if not image:
@@ -235,6 +240,7 @@ async def delete_image(session: SessionDep, _current_user: CurrentUser, image_id
 
     Raises:
         HTTPException: If image not found
+
     """
     image = await session.get(Image, image_id)
     if not image:

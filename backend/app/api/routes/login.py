@@ -17,9 +17,7 @@ router = APIRouter(tags=["login"])
 
 @router.post("/login/access-token")
 async def login_access_token(session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
-    """
-    OAuth2 compatible token login, get an access token for future requests.
-    """
+    """OAuth2 compatible token login, get an access token for future requests."""
     user = await crud.authenticate(session=session, email=form_data.username, password=form_data.password)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
@@ -31,7 +29,5 @@ async def login_access_token(session: SessionDep, form_data: Annotated[OAuth2Pas
 
 @router.post("/login/test-token", response_model=UserPublic)
 async def test_token(current_user: CurrentUser) -> Any:
-    """
-    Test access token.
-    """
+    """Test access token."""
     return current_user

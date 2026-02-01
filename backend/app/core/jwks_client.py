@@ -18,6 +18,7 @@ class OAuthJWKSClient:
     _instance: OAuthJWKSClient | None = None
 
     def __init__(self) -> None:
+        """Initialize JWKS client."""
         self._keys: dict | None = None
         self._fetched_at: datetime | None = None
         self._cache_duration = timedelta(hours=1)

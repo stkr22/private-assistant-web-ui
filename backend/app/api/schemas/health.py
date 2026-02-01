@@ -8,6 +8,7 @@ class HealthResponse(BaseModel):
 
     Attributes:
         status: Current health status of the application.
+
     """
 
     status: str = Field(default="ok", description="Health status of the application")
