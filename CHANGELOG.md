@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.5.0...v0.6.0) (2026-02-01)
+
+
+### Features
+
+* ✨ add intent pattern management UI and skill monitoring ([3b29fae](https://github.com/stkr22/private-assistant-web-ui/commit/3b29faed1aeb8bb77a04e7fc0222b764addbf7b1))
+* ✨ add intent pattern management UI and skill monitoring ([a7dfacc](https://github.com/stkr22/private-assistant-web-ui/commit/a7dfacc9a7091eeeb2f9ab7fc24c62e06094df64))
+
+
+### Documentation
+
+* 📝 add missing docstrings for ruff compliance ([bd00a7a](https://github.com/stkr22/private-assistant-web-ui/commit/bd00a7a2534d3c7d3c04783f2e9f6f15688ec3b9))
+
 ## [0.5.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.4.3...v0.5.0) (2026-01-12)
 
 
