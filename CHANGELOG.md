@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.6.0...v0.7.0) (2026-02-01)
+
+
+### Features
+
+* ✨ add MQTT notifications for intent pattern updates ([63847b7](https://github.com/stkr22/private-assistant-web-ui/commit/63847b7b1d4d3b0d9ed1332f8fad419013be0a1e))
+* ✨ add MQTT notifications for intent pattern updates ([8074084](https://github.com/stkr22/private-assistant-web-ui/commit/8074084a47fc0b4a3396a3aa9b777f2a1d5b1f1d))
+
 ## [0.6.0](https://github.com/stkr22/private-assistant-web-ui/compare/v0.5.0...v0.6.0) (2026-02-01)
 
 
