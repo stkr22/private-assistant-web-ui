@@ -56,6 +56,7 @@ class MQTTSettings(BaseSettings):
     PORT: int = 1883
     USERNAME: str | None = None
     PASSWORD: str | None = None
+    INTENT_PATTERN_UPDATE_TOPIC: str = "assistant/intent_pattern_update"
 
 
 class MinIOSettings(BaseSettings):
